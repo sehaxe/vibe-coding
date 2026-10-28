@@ -150,7 +150,11 @@
   .materials-thumbs a{display:block;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--soft)}
   .materials-thumbs img{width:100%;display:block}
   .materials-thumbs span{display:block;padding:8px 10px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border-top:1px solid var(--line)}
-  @media(max-width:700px){.materials-thumbs{grid-template-columns:1fr}}
+  .materials-poster{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:center;margin-top:18px;border-top:1px solid var(--line);padding-top:20px}
+  .materials-poster img{width:100%;display:block;border:1px solid var(--line);border-radius:3px}
+  .materials-poster h3{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.08;margin:4px 0 8px}
+  .materials-poster p{margin:0 0 12px;font-size:12px;line-height:1.65;color:var(--body)}
+  @media(max-width:700px){.materials-thumbs{grid-template-columns:1fr}.materials-poster{grid-template-columns:1fr}}
 </style>
 <script type="application/ld+json">
 {
@@ -233,14 +237,24 @@
   <div class="materials-in">
     <div class="k">materials</div>
     <h2>Print-ready extras</h2>
-    <p>Two Typst pieces from the project: a sample certificate for every graduate and a tri-fold handout for the audience. Both are vector PDFs — print, fold, hand out.</p>
+    <p>Three Typst pieces from the project: a sample certificate, a tri-fold handout for the audience, and an A2 statement poster. All vector PDFs — print, fold, hang.</p>
     <div class="materials-links">
       <a class="btn btn-g" href="../certificates/certificate.pdf" target="_blank" rel="noopener">sample certificate (pdf)</a>
       <a class="btn btn-g" href="../handout/handout.pdf" target="_blank" rel="noopener">tri-fold handout (pdf)</a>
+      <a class="btn btn-g" href="../posters/statement.pdf" target="_blank" rel="noopener">statement poster (a2 pdf)</a>
     </div>
     <div class="materials-thumbs">
       <a href="../certificates/certificate.pdf" target="_blank" rel="noopener"><img src="../certificates/certificate-preview-1.png" alt="Sample Vibe Coding certificate"><span>certificate · A4 landscape</span></a>
       <a href="../handout/handout.pdf" target="_blank" rel="noopener"><img src="../handout/handout-preview-1.png" alt="Vibe Coding tri-fold handout"><span>handout · A4 tri-fold</span></a>
+    </div>
+    <div class="materials-poster">
+      <a href="../posters/statement.pdf" target="_blank" rel="noopener"><img src="../posters/statement-preview-1.png" alt="A2 statement poster — you didn't sign up to babysit an agent"></a>
+      <div>
+        <div class="k">statement poster</div>
+        <h3>You didn't sign up to babysit an agent.</h3>
+        <p>A2 portrait · 420 × 594 mm · vector PDF. Glitch type, scanlines, a real terminal — made to be remembered, not skimmed.</p>
+        <a class="btn btn-g" href="../posters/statement.pdf" target="_blank" rel="noopener">open poster (pdf)</a>
+      </div>
     </div>
   </div>
 </section>

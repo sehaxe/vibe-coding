@@ -53,8 +53,9 @@ The OpenCode wordmark is the property of its authors and is used here for a cour
 
 - `certificates/` — A4 landscape sample certificate (Typst): `typst compile --font-path fonts certificate.typ certificate.pdf`
 - `handout/` — A4 landscape tri-fold, 2 pages (Typst): `typst compile --font-path fonts handout.typ handout.pdf`
+- `posters/statement.typ` — A2 portrait statement poster (Typst): `typst compile --font-path ../certificates/fonts statement.typ statement.pdf`
 
-Print the handout double-sided, flip on short edge, fold in thirds. The certificate is A4 landscape; the poster is A2 portrait.
+Print the handout double-sided, flip on short edge, fold in thirds. The certificate is A4 landscape; the statement poster is A2 portrait.
 
 ## Social card / SEO
 
