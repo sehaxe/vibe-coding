@@ -26,7 +26,7 @@
   .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
   .logo .mark{width:10px;height:10px;border:1px solid var(--ink);border-radius:2px;position:relative}
   .logo .mark:before{content:"";position:absolute;left:2px;top:2px;width:4px;height:4px;background:var(--ink)}
-  .ocw{height:13px;width:auto;display:block}
+  .ocw{height:13px;width:auto;display:block;margin-left:4px}
   .prog{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--mute)}
   .bar{width:120px;height:4px;background:var(--card);border-radius:2px;overflow:hidden}
   .bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .4s ease}
@@ -37,6 +37,18 @@
   .btn-g{border-color:var(--line2)}
   .btn-g:hover{background:var(--soft);text-decoration:none}
   .btn:disabled{opacity:.4;cursor:not-allowed}
+  .menubtn{display:none}
+  @media (max-width:700px){
+    .top .in{gap:8px;padding:0 12px}
+    .logo{font-size:12px;white-space:nowrap}
+    .ocw{display:none}
+    .prog span{display:none}
+    .bar{width:64px}
+    .top .btn{padding:0 8px;height:28px}
+    .menubtn{display:block;position:fixed;right:14px;bottom:14px;z-index:45;height:38px;padding:0 14px;border-radius:19px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);font:500 12px var(--mono);box-shadow:0 8px 24px rgba(0,0,0,.12);cursor:pointer}
+    .side{display:none}
+    .side.open{display:block;position:fixed;top:56px;left:0;right:0;bottom:auto;max-height:72vh;overflow:auto;background:var(--bg);border-bottom:1px solid var(--line);padding:16px 20px;z-index:40}
+  }
   .shell{max-width:1180px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:270px 1fr;gap:0;min-height:calc(100vh - 56px)}
   .side{border-right:1px solid var(--line);padding:22px 20px 40px 0;font-size:12px;position:sticky;top:56px;height:calc(100vh - 56px);overflow:auto}
   .side-course{font-size:11px;color:var(--faint);margin-bottom:14px}
@@ -117,6 +129,8 @@
     <a class="btn btn-g" href="./index.html">← site</a>
   </div>
 </div>
+
+<button class="menubtn" id="menubtn">☰ lessons</button>
 
 <div class="shell">
   <aside class="side" id="side">
@@ -429,6 +443,8 @@ function showCert() {
     return;
   }
   $('.shell').style.display = 'none';
+  $('#pcount').textContent = TOTAL + ' / ' + TOTAL;
+  $('#pbar').style.width = '100%';
   const w = $('#certwrap'); w.style.display = 'block';
   $('#cname').textContent = store.name || 'Your name';
   $('#cdate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -443,7 +459,15 @@ function resetAll() {
 }
 
 window.addEventListener('hashchange', render);
-document.addEventListener('DOMContentLoaded', () => { outline(); render(); });
+document.addEventListener('DOMContentLoaded', () => {
+  outline(); render();
+  const mb = document.getElementById('menubtn');
+  const side = document.getElementById('side');
+  if (mb) mb.onclick = () => side.classList.toggle('open');
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.l')) side.classList.remove('open');
+  });
+});
 </script>
 </body>
 </html>
