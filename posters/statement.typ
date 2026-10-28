@@ -214,9 +214,9 @@
 ]
 
 // QR
-#place(top + left, dx: 342mm, dy: 500mm)[
-  #box(fill: white, inset: 2mm, stroke: 0.35pt + cream.transparentize(80%))[
-    #image("assets/qr.png", width: 32mm)
+#place(top + left, dx: 330mm, dy: 452mm)[
+  #box(fill: white, inset: 2.2mm, stroke: 0.35pt + cream.transparentize(80%))[
+    #image("assets/qr.png", width: 44mm)
   ]
   #v(1.2mm)
   #text(font: mono, size: 4.8pt, tracking: 0.12em, fill: faint)[SCAN THE COURSE]

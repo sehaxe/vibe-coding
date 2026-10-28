@@ -8,6 +8,14 @@
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="author" content="Denis, Danik, Mukhammed, Arseniy">
 <meta name="theme-color" content="#fdfcfc">
+<script>
+try {
+  var __c = localStorage.getItem('vibe-theme') || 'auto';
+  var __d = matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.theme = __c === 'auto' ? (__d ? 'dark' : 'light') : __c;
+  document.documentElement.dataset.themeChoice = __c;
+} catch (e) {}
+</script>
 <link rel="canonical" href="https://sehaxe.github.io/vibe-coding/site/">
 <link rel="apple-touch-icon" href="assets/og/apple-touch-icon.png">
 <link rel="sitemap" type="application/xml" href="https://sehaxe.github.io/vibe-coding/sitemap.xml">
@@ -318,6 +326,55 @@
   html.rec,html.rec body{scroll-behavior:auto}
   html.rec *{scrollbar-width:none}
   html.rec *::-webkit-scrollbar{display:none}
+
+  nav button.navlink{background:none;border:0;padding:0;font:inherit;color:var(--mute);cursor:pointer}
+  nav button.navlink:hover{color:var(--ink);text-decoration:none}
+
+  /* ---- dark theme ---- */
+  html[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#0d0b0b;--soft:#141212;--card:#1b1818;
+    --ink:#fdfcfc;--ink-deep:#ffffff;--body:#c9c5c0;--mute:#9a9898;--faint:#646262;
+    --line:rgba(253,252,252,.14);--line2:#9a9898;
+    --dark:#141212;--dark2:#1b1818;--on-dark:#fdfcfc;--on-dark-mute:#9a9898;
+    --accent:#2f6bff;--ok:#7ee787;
+  }
+  html[data-theme="dark"] body{background:var(--bg);color:var(--ink)}
+  html[data-theme="dark"] header{background:rgba(13,11,11,.92);backdrop-filter:blur(12px)}
+  html[data-theme="dark"] h1{
+    text-shadow:1px 0 rgba(47,107,255,.55),-1px 0 rgba(255,90,54,.45);
+    animation:glitch 7s infinite steps(1);
+  }
+  html[data-theme="dark"] h2{text-shadow:1px 0 rgba(47,107,255,.3),-1px 0 rgba(255,90,54,.25)}
+  html[data-theme="dark"] .stage{box-shadow:0 0 0 1px rgba(47,107,255,.22),0 24px 70px -30px rgba(0,0,0,.9)}
+  html[data-theme="dark"] .hero{position:relative;overflow:hidden}
+  html[data-theme="dark"] .hero::after{
+    content:"";position:absolute;left:0;right:0;top:0;height:2px;pointer-events:none;opacity:.55;
+    background:linear-gradient(90deg,transparent,rgba(47,107,255,.6),rgba(255,90,54,.5),transparent);
+    animation:scanline 6.5s linear infinite;
+  }
+  html[data-theme="dark"] .hero h1 em{text-shadow:2px 0 rgba(47,107,255,.6),-2px 0 rgba(255,90,54,.5)}
+  @keyframes scanline{0%{transform:translateY(-6px)}100%{transform:translateY(80vh)}}
+  html[data-theme="dark"] .demo:hover,html[data-theme="dark"] .film:hover{border-color:rgba(47,107,255,.55)}
+  html[data-theme="dark"] body::before{
+    content:"";position:fixed;inset:0;z-index:9997;pointer-events:none;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px);
+    opacity:.55;mix-blend-mode:overlay;
+  }
+  html[data-theme="dark"] body::after{
+    content:"";position:fixed;inset:0;z-index:9996;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  }
+  @keyframes glitch{
+    0%,91%,100%{text-shadow:1px 0 rgba(47,107,255,.55),-1px 0 rgba(255,90,54,.45);transform:translateX(0)}
+    92%{text-shadow:3px 0 rgba(47,107,255,.8),-3px 0 rgba(255,90,54,.7);transform:translateX(1px)}
+    93%{text-shadow:-2px 0 rgba(47,107,255,.7),2px 0 rgba(255,90,54,.6);transform:translateX(-1px)}
+    94%{text-shadow:1px 0 rgba(47,107,255,.55),-1px 0 rgba(255,90,54,.45);transform:translateX(0)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html[data-theme="dark"] h1{animation:none}
+    html[data-theme="dark"] body::before,html[data-theme="dark"] body::after{display:none}
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -383,6 +440,7 @@
       <a class="navlink" href="#demo">demo</a>
       <a class="navlink" href="#team">team</a>
       <a class="navlink" href="course.html">course</a>
+      <button class="navlink themebtn" id="themebtn" type="button" aria-label="Switch theme">[theme: auto]</button>
       <a class="btn btn-p" href="course.html">[start]</a>
     </nav>
   </div>
@@ -925,6 +983,31 @@ document.addEventListener('DOMContentLoaded', function () {
   lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !lb.hidden) close(); });
 });
+
+
+/* theme switch: auto / light / dark */
+(function () {
+  const btn = document.getElementById('themebtn');
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const choices = ['auto', 'light', 'dark'];
+  let choice = 'auto';
+  try { choice = localStorage.getItem('vibe-theme') || 'auto'; } catch (e) {}
+  function apply() {
+    const resolved = choice === 'auto' ? (mq.matches ? 'dark' : 'light') : choice;
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.themeChoice = choice;
+    if (btn) btn.textContent = '[theme: ' + choice + ']';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = resolved === 'dark' ? '#0d0b0b' : '#fdfcfc';
+  }
+  if (btn) btn.addEventListener('click', () => {
+    choice = choices[(choices.indexOf(choice) + 1) % choices.length];
+    try { localStorage.setItem('vibe-theme', choice); } catch (e) {}
+    apply();
+  });
+  mq.addEventListener('change', () => { if (choice === 'auto') apply(); });
+  apply();
+})();
 
 /* reveal on scroll */
 const io = new IntersectionObserver((es) => {
