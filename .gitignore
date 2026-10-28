@@ -7,3 +7,4 @@ video/term/out/raw/
 video/real/out/
 video/promo/node_modules/
 .DS_Store
+video/promo/render.log
