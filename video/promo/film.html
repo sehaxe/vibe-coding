@@ -42,9 +42,21 @@ grain.width = 480; grain.height = 270;
 
 const wm = new Image(); wm.src = '../../site/assets/brand/opencode-wordmark-dark.png';
 const qr = new Image(); qr.src = '../../site/assets/brand/qr.png';
+const shotG = new Image(); shotG.src = '../demos/gostpadi.jpg';
+const shotL = new Image(); shotL.src = '../demos/labpad.jpg';
 
 function font(size, kind = 'serif', italic = false, weight = 400) {
   return `${italic ? 'italic ' : ''}${weight} ${size}px ${kind === 'serif' ? '"Instrument Serif"' : '"JetBrains Mono"'}`;
+}
+
+function rrect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
 
 function T(s, x, y, size, o = {}) {
@@ -428,44 +440,32 @@ function s7(t) { // 51.4 - 60 : the tools
   grainOverlay(.055); vignette(.5);
 }
 
-function s8(t) { // 60 - 70 : proof cards
+function proofCard(img, x, y, w, h, rot, t, label) {
+  const z = 1.035 + Math.sin(t * .18 + x) * .012;
+  const fy = Math.sin(t * .5 + x * .01) * 4;
+  ctx.save(); ctx.translate(x, y + fy); ctx.rotate(rot);
+  ctx.shadowColor = 'rgba(30,20,10,.20)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 22;
+  ctx.fillStyle = C.cream; ctx.fillRect(-w / 2, -h / 2, w, h);
+  ctx.shadowColor = 'transparent';
+  rrect(-w / 2, -h / 2, w, h, 10); ctx.clip();
+  if (img.complete && img.width) {
+    const sc = Math.max(w / img.width, h / img.height) * z;
+    ctx.drawImage(img, -img.width * sc / 2, -img.height * sc / 2, img.width * sc, img.height * sc);
+  }
+  ctx.restore();
+  ctx.save(); ctx.translate(x, y + fy); ctx.rotate(rot);
+  rrect(-w / 2, -h / 2, w, h, 10); ctx.strokeStyle = 'rgba(32,29,29,.16)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.restore();
+  T(label, x, y - h / 2 - 18, 11, { kind: 'mono', color: C.dim, align: 'center', alpha: .85 });
+}
+
+function s8(t) { // 60.58 - 70.59 : proof, real screenshots
   bg(false);
   const u = t - 60.58;
-  // card 1 : flowchart
-  ctx.save();
-  ctx.globalAlpha = clamp((u - .1) / .7);
-  ctx.translate(480, 560); ctx.rotate(-0.05);
-  ctx.fillStyle = C.cream; ctx.strokeStyle = 'rgba(32,29,29,.16)'; ctx.lineWidth = 1;
-  ctx.fillRect(-300, -230, 600, 460); ctx.strokeRect(-300, -230, 600, 460);
-  T('gostpadi', -270, -190, 22, { kind: 'mono', weight: 700, color: C.ink });
-  T('C → ГОСТ 19.701', -270, -160, 11, { kind: 'mono', color: C.dim });
-  // flowchart
-  const nodes = [[-120, -80], [0, -10], [120, -80], [0, 80], [0, 160]];
-  const prog = easeOut(clamp((u - .5) / 2.5));
-  ctx.strokeStyle = C.ink; ctx.globalAlpha = .5 * prog; ctx.lineWidth = 1.5;
-  nodes.forEach(([x, y], i) => {
-    ctx.beginPath(); ctx.arc(x, y, 22, 0, TAU); ctx.stroke();
-  });
-  line(-120, -58, 0, -30, C.ink, .5 * prog, 1.5);
-  line(0, 10, -100, -60, C.ink, .5 * prog, 1.5);
-  line(0, 10, 100, -60, C.ink, .5 * prog, 1.5);
-  line(0, 10, 0, 58, C.ink, .5 * prog, 1.5);
-  line(0, 102, 0, 138, C.ink, .5 * prog, 1.5);
-  ctx.restore();
-  // card 2 : A4
-  ctx.save();
-  ctx.globalAlpha = clamp((u - .6) / .7);
-  ctx.translate(1420, 560); ctx.rotate(0.05);
-  ctx.fillStyle = C.cream; ctx.strokeStyle = 'rgba(32,29,29,.16)'; ctx.lineWidth = 1;
-  ctx.fillRect(-260, -320, 520, 640); ctx.strokeRect(-260, -320, 520, 640);
-  T('labpad', -230, -280, 22, { kind: 'mono', weight: 700, color: C.ink });
-  T('A4 · схема · PDF', -230, -250, 11, { kind: 'mono', color: C.dim });
-  for (let i = 0; i < 9; i++) { ctx.fillStyle = 'rgba(32,29,29,.14)'; ctx.fillRect(-220, -190 + i * 34, 300 - (i % 3) * 40, 5); }
-  // mini scheme
-  ctx.strokeStyle = C.ink; ctx.globalAlpha = .45 * prog; ctx.lineWidth = 1.2;
-  ctx.strokeRect(-80, 150, 120, 36);
-  ctx.beginPath(); ctx.moveTo(-20, 150); ctx.lineTo(-20, 120); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(-20, 120); ctx.lineTo(40, 120); ctx.stroke();
+  const p = clamp((u - .1) / 1.2);
+  ctx.save(); ctx.globalAlpha = p;
+  proofCard(shotG, 470, 560, 620, 349, -0.028, t, 'gostpadi · C → ГОСТ');
+  proofCard(shotL, 1450, 560, 620, 349, 0.028, t, 'labpad · A4 → PDF');
   ctx.restore();
   T('built with the loop', 140, 940, 16, { kind: 'mono', color: C.dim, alpha: clamp((u - 1.2) / .8), ls: 3 });
   grainOverlay(.04); vignette(.05);
@@ -675,7 +675,9 @@ Promise.all([
   document.fonts.load('400 16px "JetBrains Mono"'),
   document.fonts.load('700 96px "JetBrains Mono"'),
   new Promise(r => { if (wm.complete) r(); else wm.onload = r; }),
-  new Promise(r => { if (qr.complete) r(); else qr.onload = r; })
+  new Promise(r => { if (qr.complete) r(); else qr.onload = r; }),
+  new Promise(r => { if (shotG.complete) r(); else shotG.onload = r; }),
+  new Promise(r => { if (shotL.complete) r(); else shotL.onload = r; })
 ]).then(() => { window.__ready = true; render(0); });
 </script>
 </body>

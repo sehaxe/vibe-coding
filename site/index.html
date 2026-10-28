@@ -115,7 +115,7 @@
   @media (max-width:900px){.demos{grid-template-columns:1fr}}
 
   .demo{position:relative;cursor:pointer}
-  .demo video{object-fit:cover}
+  .demo video{object-fit:cover;pointer-events:none}
   .demo .play{position:absolute;right:12px;top:12px;font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--bg);background:rgba(32,29,29,.78);border-radius:3px;padding:5px 8px;opacity:0;transition:opacity .2s}
   .demo:hover .play{opacity:1}
   .lb{position:fixed;inset:0;z-index:9999;background:rgba(10,9,9,.94);display:flex;align-items:center;justify-content:center;padding:4vw}
@@ -482,9 +482,9 @@
     <section id="demos">
       <div class="sechead"><h2>Real demos</h2><span class="tag">actual screens · no mock</span></div>
       <div class="demos">
-        <article class="demo" data-src="../video/demos/opencode.mp4"><video muted loop playsinline autoplay preload="metadata" poster="../video/demos/opencode.jpg"><source src="../video/demos/opencode.mp4" type="video/mp4"></video><span class="play">watch full ↗</span><div class="cap"><h3>opencode</h3><p>a real session: plan, edit, verify — in the terminal.</p></div></article>
-        <article class="demo" data-src="../video/demos/gostpadi.mp4"><video muted loop playsinline autoplay preload="metadata" poster="../video/demos/gostpadi.jpg"><source src="../video/demos/gostpadi.mp4" type="video/mp4"></video><span class="play">watch full ↗</span><div class="cap"><h3>gostpadi</h3><p>block schemes from C — built with opencode.</p></div></article>
-        <article class="demo" data-src="../video/demos/labpad.mp4"><video muted loop playsinline autoplay preload="metadata" poster="../video/demos/labpad.jpg"><source src="../video/demos/labpad.mp4" type="video/mp4"></video><span class="play">watch full ↗</span><div class="cap"><h3>labpad</h3><p>lab reports on A4 — built with opencode.</p></div></article>
+        <article class="demo" data-src="../video/demos/opencode.mp4" data-start="0"><video muted loop playsinline preload="auto" poster="../video/demos/opencode.jpg"><source src="../video/demos/opencode.mp4" type="video/mp4"></video><span class="play">watch full ↗</span><div class="cap"><h3>opencode</h3><p>a real session: plan, edit, verify — in the terminal.</p></div></article>
+        <article class="demo" data-src="../video/demos/gostpadi.mp4" data-start="2.5"><video muted loop playsinline preload="auto" poster="../video/demos/gostpadi.jpg"><source src="../video/demos/gostpadi.mp4" type="video/mp4"></video><span class="play">watch full ↗</span><div class="cap"><h3>gostpadi</h3><p>block schemes from C — built with opencode.</p></div></article>
+        <article class="demo" data-src="../video/demos/labpad.mp4" data-start="2.5"><video muted loop playsinline preload="auto" poster="../video/demos/labpad.jpg"><source src="../video/demos/labpad.mp4" type="video/mp4"></video><span class="play">watch full ↗</span><div class="cap"><h3>labpad</h3><p>lab reports on A4 — built with opencode.</p></div></article>
       </div>
     </section>
 
@@ -837,7 +837,23 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!lb) return;
   function open(src) { v.src = src; lb.hidden = false; v.play().catch(() => {}); document.body.style.overflow = 'hidden'; }
   function close() { v.pause(); v.removeAttribute('src'); v.load(); lb.hidden = true; document.body.style.overflow = ''; }
-  document.querySelectorAll('.demo').forEach(d => d.addEventListener('click', () => open(d.dataset.src)));
+  document.querySelectorAll('.demo').forEach(d => {
+    d.addEventListener('click', () => open(d.dataset.src));
+    const v = d.querySelector('video');
+    const st = parseFloat(d.dataset.start || 0);
+    d.addEventListener('mouseenter', () => {
+      const start = () => v.play().catch(() => {});
+      const go = () => {
+        if (Math.abs(v.currentTime - st) > 0.15) {
+          v.addEventListener('seeked', start, { once: true });
+          try { v.currentTime = st; } catch (e) { start(); }
+        } else start();
+      };
+      if (v.readyState >= 2) go();
+      else { v.addEventListener('canplay', go, { once: true }); v.load(); }
+    });
+    d.addEventListener('mouseleave', () => { v.pause(); try { v.currentTime = st; } catch (e) {} });
+  });
   x.addEventListener('click', close);
   lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !lb.hidden) close(); });
