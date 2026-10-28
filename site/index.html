@@ -100,6 +100,19 @@
   .mod h3{font-size:15px;margin:0 0 4px}
   .mod p{margin:0;font-size:13.5px;color:var(--body);line-height:1.6}
   .mod .wk{font-size:12px;color:var(--mute);text-align:right}
+
+  .stage{padding:0;position:relative;display:flex;flex-direction:column}
+  .stage-video{width:100%;height:100%;object-fit:cover;display:block;flex:1;min-height:0}
+  .stage-cap{position:absolute;left:14px;bottom:12px;font-size:10px;letter-spacing:.08em;color:rgba(253,252,252,.45);z-index:2}
+  .film{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#0d0b0b;box-shadow:0 40px 90px -60px rgba(0,0,0,.6)}
+  .film video{width:100%;display:block;aspect-ratio:16/9;background:#0d0b0b}
+  .demos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .demo{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--soft)}
+  .demo video{width:100%;display:block;aspect-ratio:16/9;background:#0d0b0b}
+  .demo .cap{padding:12px 14px}
+  .demo h3{margin:0 0 3px;font-size:13px}
+  .demo p{margin:0;font-size:11.5px;color:var(--mute);line-height:1.6}
+  @media (max-width:900px){.demos{grid-template-columns:1fr}}
   /* ---- vibe studio demo ---- */
   .studio{border:1px solid rgba(15,0,0,.2);border-radius:10px;overflow:hidden;background:var(--dark);color:var(--on-dark);box-shadow:0 40px 90px -55px rgba(0,0,0,.65)}
   .studio-bar{height:36px;display:flex;align-items:center;gap:10px;padding:0 12px;background:#1b1818;border-bottom:1px solid rgba(253,252,252,.1);font-size:11px;color:var(--on-dark-mute)}
@@ -288,6 +301,8 @@
     <nav>
       <a class="navlink" href="#workflow">workflow</a>
       <a class="navlink" href="#curriculum">curriculum</a>
+      <a class="navlink" href="#film">film</a>
+      <a class="navlink" href="#demos">demos</a>
       <a class="navlink" href="#demo">demo</a>
       <a class="navlink" href="#team">team</a>
       <a class="navlink" href="course.html">course</a>
@@ -314,24 +329,10 @@
         <p class="hint">36 hours · 12–16 seats · no CS degree required</p>
       </div>
 
-      <div class="stage reveal" aria-hidden="true">
-        <div class="stage-bar"><span class="dots"><i></i><i></i><i></i></span><span>opencode — ~/vibe-lab</span><span style="margin-left:auto">cohort_04</span></div>
-        <div class="stage-body">
-          <div class="term"><img class="stage-logo" src="assets/brand/opencode-wordmark-dark.png" alt="OpenCode"><span class="p">$</span> opencode
-<span class="p">›</span> build a landing page for a coffee shop
-<span class="dim">● Read</span> site/index.html
-<span class="dim">● Write</span> site/index.html <span class="ok">+128</span>
-<span class="dim">● Bash</span> npm run dev
-<span class="ok">✔ ready in 412ms</span> — localhost:3000
-<span class="p">›</span> <span class="cursor"></span></div>
-          <div class="mini">
-            <div class="mh"></div>
-            <b>Ember &amp; Oak</b>
-            <div class="ml"></div><div class="ml s"></div>
-            <div class="ml"></div><div class="ml s"></div>
-            <div class="mb">order ahead</div>
-          </div>
-        </div>
+      <div class="stage reveal">
+        <div class="stage-bar"><span class="dots"><i></i><i></i><i></i></span><span>opencode — ~/vibe-demo — real session</span><span style="margin-left:auto">cohort_04</span></div>
+        <video class="stage-video" src="../video/demos/opencode-hero.mp4" poster="../video/demos/opencode-hero.jpg" autoplay muted loop playsinline preload="auto"></video>
+        <div class="stage-cap">real pty · real opencode · no mock</div>
       </div>
     </section>
 
@@ -462,6 +463,21 @@
       </div>
     </section>
 
+
+    <section id="film">
+      <div class="sechead"><h2>The film</h2><span class="tag">108 seconds · sound on · 60 fps</span></div>
+      <div class="film"><video controls playsinline preload="metadata" src="../video/promo/out/nangs-film.mp4"></video></div>
+    </section>
+
+    <section id="demos">
+      <div class="sechead"><h2>Real demos</h2><span class="tag">actual screens · no mock</span></div>
+      <div class="demos">
+        <article class="demo"><video controls muted playsinline preload="metadata" poster="../video/demos/opencode.jpg" src="../video/demos/opencode.mp4"></video><div class="cap"><h3>opencode</h3><p>a real session: plan, edit, verify — in the terminal.</p></div></article>
+        <article class="demo"><video controls muted playsinline preload="metadata" poster="../video/demos/gostpadi.jpg" src="../video/demos/gostpadi.mp4"></video><div class="cap"><h3>gostpadi</h3><p>block schemes from C — built with opencode.</p></div></article>
+        <article class="demo"><video controls muted playsinline preload="metadata" poster="../video/demos/labpad.jpg" src="../video/demos/labpad.mp4"></video><div class="cap"><h3>labpad</h3><p>lab reports on A4 — built with opencode.</p></div></article>
+      </div>
+    </section>
+
     <section id="team">
       <div class="sechead"><h2>The team</h2><span class="tag">who builds the course</span></div>
       <div class="team">
@@ -536,6 +552,7 @@
       <a href="#curriculum">Curriculum</a>
       <a href="#demo">Demo</a>
       <a href="course.html">Course</a>
+      <a href="#film">Film</a>
       <a href="#team">Team</a>
     </span>
   </div>

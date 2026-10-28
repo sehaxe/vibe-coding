@@ -10,7 +10,7 @@ A six-week course that teaches IT students and juniors to build with AI agents â
 site/      landing page + interactive demo + course (19 lessons, localStorage progress, certificate)
 poster/    A2 poster (HTML + PDF)
 slides/    10-slide deck, keyboard navigation, print to PDF
-video/     macOS-style promo stage, Playwright recording, ffmpeg assembly
+video/     the 60 fps motion film (canvas), real demo clips, terminal harness
 docs/      fact sheet, roles, 7-minute script
 ```
 
@@ -24,14 +24,18 @@ python3 -m http.server 8100
 # slides:   http://127.0.0.1:8100/slides/
 ```
 
-## Rebuild the promo video
+## The film
+
+`video/promo/film.html` is a deterministic canvas timeline (108.54 s, 60 fps). Render frames and mux the track:
 
 ```bash
-npm i
-node video/record.mjs        # records video/raw/*.webm (needs Chromium)
-# put the track at video/music/nangs.mp3, then:
-./video/assemble.sh          # video/out/vibe-coding-promo.mp4
+cd video/promo
+FPS=60 node render.mjs                     # frames/f00000.jpg â€¦
+ffmpeg -framerate 60 -i frames/f%05d.jpg -i "/path/to/nangs.opus" \
+  -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -b:a 192k -shortest out/nangs-film.mp4
 ```
+
+The real screen demos live in `video/demos/`; the OpenCode terminal harness is in `video/term/`.
 
 ## Course facts
 

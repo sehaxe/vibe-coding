@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>vibe-coding — film</title>
+<style>
+  @font-face{font-family:"JetBrains Mono";src:url("../../site/assets/fonts/JetBrainsMono-var.woff2") format("woff2");font-weight:400 700;font-display:block}
+  @font-face{font-family:"Instrument Serif";src:url("../../site/assets/fonts/InstrumentSerif-normal.woff2") format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"Instrument Serif";src:url("../../site/assets/fonts/InstrumentSerif-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:block}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#0d0b0b}
+  canvas{display:block;width:1920px;height:1080px}
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+const W = 1920, H = 1080, TAU = Math.PI * 2;
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+
+const C = { ink: '#0d0b0b', cream: '#fdfcfc', ember: '#ff5a36', blue: '#2f6bff', gray: '#9a9898', dim: '#646262' };
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOut = (t) => 1 - Math.pow(1 - clamp(t), 3);
+const easeInOut = (t) => { t = clamp(t); return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+// deterministic grain
+const grain = document.createElement('canvas');
+grain.width = 480; grain.height = 270;
+{
+  const g = grain.getContext('2d');
+  const img = g.createImageData(480, 270);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 120 + Math.floor(hash(i) * 135);
+    img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+    img.data[i + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+}
+
+const wm = new Image(); wm.src = '../../site/assets/brand/opencode-wordmark-dark.png';
+const qr = new Image(); qr.src = '../../site/assets/brand/qr.png';
+
+function font(size, kind = 'serif', italic = false, weight = 400) {
+  return `${italic ? 'italic ' : ''}${weight} ${size}px ${kind === 'serif' ? '"Instrument Serif"' : '"JetBrains Mono"'}`;
+}
+
+function T(s, x, y, size, o = {}) {
+  const { kind = 'serif', italic = false, weight = 400, color = C.cream, alpha = 1, align = 'left', ls = 0, baseline = 'alphabetic' } = o;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.font = font(size, kind, italic, weight);
+  ctx.textAlign = align;
+  ctx.textBaseline = baseline;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = ls + 'px';
+  ctx.fillText(s, x, y);
+  ctx.restore();
+}
+
+function measure(s, size, kind = 'serif', italic = false, weight = 400, ls = 0) {
+  ctx.save();
+  ctx.font = font(size, kind, italic, weight);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = ls + 'px';
+  const w = ctx.measureText(s).width;
+  ctx.restore();
+  return w;
+}
+
+function words(s, x, y, size, u, o = {}, stagger = 0.07) {
+  const parts = s.split(' ');
+  let cx = x;
+  parts.forEach((w, i) => {
+    const a = clamp((u - i * stagger) / 0.55);
+    const dy = (1 - easeOut(a)) * 26;
+    const ww = measure(w, size, o.kind, o.italic, o.weight, o.ls);
+    T(w, cx, y + dy, size, { ...o, alpha: (o.alpha ?? 1) * a });
+    cx += ww + measure(' ', size, o.kind, o.italic, o.weight, o.ls);
+  });
+}
+
+function bg(ink) {
+  ctx.save();
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = ink ? C.ink : C.cream;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+}
+
+function mesh(t, a, b) {
+  const g1 = ctx.createRadialGradient(W * .2 + Math.sin(t * .2) * 80, H * .25, 0, W * .2, H * .25, 900);
+  g1.addColorStop(0, a); g1.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+  const g2 = ctx.createRadialGradient(W * .82, H * .3 + Math.cos(t * .17) * 60, 0, W * .82, H * .3, 1000);
+  g2.addColorStop(0, b); g2.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+}
+
+function grainOverlay(alpha = 0.055) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.globalCompositeOperation = 'overlay';
+  ctx.drawImage(grain, 0, 0, W, H);
+  ctx.restore();
+}
+
+function vignette(alpha = 0.5) {
+  const a = alpha * 0.28;
+  const g = ctx.createRadialGradient(W / 2, H / 2, H * .5, W / 2, H / 2, H * 1.05);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(1, `rgba(0,0,0,${a})`);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+}
+
+const beat = (t, period = 0.7, phase = 0.2) => {
+  const d = ((t - phase) % period + period) % period;
+  return Math.exp(-Math.pow((d - 0.02) / 0.075, 2));
+};
+
+function ring(x, y, r, color, alpha = 1, lw = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke(); ctx.restore();
+}
+
+function dot(x, y, r, color, alpha = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = color;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.restore();
+}
+
+function line(x1, y1, x2, y2, color, alpha = 1, lw = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
+}
+
+function cursor(x, y, s = 1, color = C.cream) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = color; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(16, 12); ctx.lineTo(7, 13.2); ctx.lineTo(9.5, 23); ctx.closePath();
+  ctx.fill(); ctx.stroke(); ctx.restore();
+}
+
+// ---------- scenes ----------
+function s0(t) { // 0 - 5.5 : the hook
+  bg(true);
+  mesh(t, 'rgba(255,90,54,.10)', 'rgba(47,107,255,.08)');
+  const u = t;
+  // thin line
+  const lw = easeOut(clamp(u / 1.2));
+  line(140, 780, 140 + 720 * lw, 780, C.cream, .25, 1);
+  dot(140 + 720 * lw, 780, 3, C.blue, lw);
+  // orbit
+  const cx = 1470, cy = 470, r = 250;
+  ring(cx, cy, r, C.cream, .10, 1);
+  ring(cx, cy, r * .72, C.cream, .06, 1);
+  for (let i = 0; i < 18; i++) {
+    const a = (i / 18) * TAU + u * .12;
+    const rr = i % 3 === 0 ? r : r * .72;
+    dot(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, i % 3 === 0 ? 2 : 1, C.cream, .22);
+  }
+  const ca = u * .6;
+  cursor(cx + Math.cos(ca) * r - 6, cy + Math.sin(ca) * r - 10, .9, C.cream);
+  // sparks
+  for (let i = 0; i < 7; i++) {
+    const ph = (u * .18 + i * .137) % 1;
+    const a = hash(i * 9.1) * TAU;
+    const rr = 120 + hash(i * 3.7) * 260;
+    dot(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 1.6, C.ember, .55 * (1 - ph));
+  }
+  T('vibe-coding · cohort 04', 140, 330, 14, { kind: 'mono', color: C.gray, alpha: clamp((u - .2) / .6), ls: 3 });
+  words("You didn't sign up", 140, 480, 96, u - .4, { color: C.cream });
+  const u2 = u - .8;
+  T('to', 140, 586, 96, { color: C.cream, alpha: clamp(u2 / .5) });
+  T('babysit', 140 + measure('to ', 96), 586, 96, { italic: true, color: C.ember, alpha: clamp((u2 - .15) / .5) });
+  T('an agent.', 140 + measure('to babysit ', 96) + 18, 586, 96, { color: C.cream, alpha: clamp((u2 - .3) / .5) });
+  T('You signed up to build.', 140, 680, 18, { kind: 'mono', color: C.gray, alpha: clamp((u - 1.6) / .7) });
+  grainOverlay(); vignette(.55);
+}
+
+function s1(t) { // 5.5 - 8.2 : ship
+  bg(true);
+  mesh(t, 'rgba(47,107,255,.10)', 'rgba(255,90,54,.07)');
+  const u = t - 5.5;
+  line(140, 760, 1780, 760, C.cream, .12, 1);
+  const rise = easeOut(clamp(u / 2.2));
+  const sy = lerp(860, 610, rise);
+  dot(1400, sy, 120, C.cream, .9);
+  dot(1400, sy, 120, C.blue, .12);
+  // trail
+  for (let i = 1; i < 8; i++) dot(1400, sy + i * 26, 2, C.cream, .10 * (1 - i / 8));
+  words('You wanted to ship.', 140, 540, 108, u - .1, { color: C.cream });
+  T('so we built the loop that makes it safe.', 140, 640, 18, { kind: 'mono', color: C.gray, alpha: clamp((u - .9) / .8) });
+  grainOverlay(); vignette(.5);
+}
+
+function s2(t) { // 8.2 - 13 : wordmark
+  bg(false);
+  mesh(t, 'rgba(255,90,54,.05)', 'rgba(47,107,255,.06)');
+  const u = t - 8.2;
+  const cx = W / 2, cy = 500;
+  // orbit
+  for (let i = 0; i < 3; i++) {
+    ring(cx, cy, 210 + i * 70, C.ink, .10 - i * .02, 1);
+    const a = u * (.25 + i * .1) + i * 2;
+    dot(cx + Math.cos(a) * (210 + i * 70), cy + Math.sin(a) * (210 + i * 70), 3, i === 1 ? C.blue : C.ink, .8);
+  }
+  const a = clamp((u - .2) / .7);
+  ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(cx - 300, cy - 18, 24, 24); ctx.fillStyle = C.ink; ctx.fillRect(cx - 292, cy - 10, 8, 8); ctx.restore();
+  T('vibe-coding', cx - 245, cy + 20, 96, { kind: 'mono', weight: 700, color: C.ink, alpha: a, ls: -2 });
+  T('a six-week course in shipping with agents', cx, cy + 110, 18, { kind: 'mono', color: C.dim, align: 'center', alpha: clamp((u - .8) / .7) });
+  T('spec  →  build  →  review  →  ship', cx, cy + 160, 16, { kind: 'mono', color: C.ink, align: 'center', alpha: clamp((u - 1.2) / .7), ls: 2 });
+  // dots grid
+  for (let i = 0; i < 40; i++) {
+    const x = 140 + hash(i * 2.1) * 1640, y = 120 + hash(i * 7.7) * 840;
+    dot(x, y, 1, C.ink, .10);
+  }
+  grainOverlay(.045); vignette(.06);
+}
+
+function s3(t) { // 13 - 26.6 : the loop of fixes
+  bg(true);
+  mesh(t, 'rgba(255,90,54,.10)', 'rgba(47,107,255,.04)');
+  const u = t - 13;
+  const cx = W / 2, cy = 500;
+  const zoom = 1 + easeInOut(clamp((u - 9) / 4.2)) * .45;
+  ctx.save();
+  ctx.translate(cx, cy); ctx.scale(zoom, zoom); ctx.translate(-cx, -cy);
+  // ring of diff cards
+  const N = 26, R = 330;
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * TAU + u * .18;
+    const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(a + Math.PI / 2);
+    ctx.globalAlpha = .55;
+    ctx.fillStyle = 'rgba(253,252,252,.05)'; ctx.strokeStyle = 'rgba(253,252,252,.18)'; ctx.lineWidth = 1;
+    ctx.fillRect(-34, -22, 68, 44); ctx.strokeRect(-34, -22, 68, 44);
+    ctx.fillStyle = C.ember; ctx.globalAlpha = .5 + .4 * hash(i * 4.3);
+    ctx.fillRect(-26, -10 + hash(i) * 6, 40 * hash(i * 2.2) + 8, 2);
+    ctx.fillStyle = 'rgba(253,252,252,.35)';
+    ctx.fillRect(-26, 2, 30, 1.5); ctx.fillRect(-26, 8, 44, 1.5);
+    ctx.restore();
+  }
+  // orbit cursor
+  const ca = u * .5;
+  cursor(cx + Math.cos(ca) * R - 6, cy + Math.sin(ca) * R - 10, 1, C.cream);
+  // center
+  const pulse = 1 + beat(t) * .05;
+  ctx.save(); ctx.translate(cx, cy); ctx.scale(pulse, pulse);
+  T('fix.', 0, 10, 150, { color: C.cream, align: 'center', italic: true });
+  ctx.restore();
+  T('fix.  fix.  fix.', cx, cy + 110, 24, { kind: 'mono', color: C.ember, align: 'center', alpha: .75, ls: 6 });
+  ctx.restore();
+  // caption
+  const cap = clamp((u - 2) / 1);
+  T('the model answers.', 140, 860, 18, { kind: 'mono', color: C.gray, alpha: cap });
+  T('the agent acts.', 140, 890, 18, { kind: 'mono', color: C.cream, alpha: clamp((u - 3) / 1) });
+  // glitch flashes near the end
+  if (u > 8.5) {
+    for (let i = 0; i < 3; i++) {
+      const on = hash(Math.floor(u * 12) + i * 5) > .72;
+      if (on) { ctx.fillStyle = C.ember; ctx.globalAlpha = .08; ctx.fillRect(0, hash(u + i) * H, W, 2 + hash(u * 2 + i) * 8); ctx.globalAlpha = 1; }
+    }
+  }
+  grainOverlay(.07); vignette(.55);
+}
+
+function s4(t) { // 26.6 - 29.6 : build-up
+  bg(true);
+  const u = t - 26.6;
+  const cx = W / 2, cy = H / 2;
+  const p = clamp(u / 3);
+  for (let i = 0; i < 5; i++) {
+    const ph = (u * .6 + i * .2) % 1;
+    ring(cx, cy, 40 + ph * 460, C.cream, (1 - ph) * .25, 1);
+  }
+  dot(cx, cy, 6 + 10 * (1 - p), C.cream, 1);
+  const lines = ['6 weeks.', '36 hours.', 'One shipped feature.'];
+  lines.forEach((l, i) => {
+    const a = clamp((u - i * .75) / .35);
+    if (a > 0) T(l, 140, 470 + i * 110, 78, { color: i === 2 ? C.blue : C.cream, alpha: a });
+  });
+  // flash at the drop
+  if (u > 2.85) { ctx.fillStyle = C.cream; ctx.globalAlpha = clamp((u - 2.85) / .1); ctx.fillRect(0, 0, W, H); }
+  grainOverlay(.05); vignette(.5);
+}
+
+function s5(t) { // 29.6 - 40.8 : the loop (drop)
+  bg(false);
+  mesh(t, 'rgba(47,107,255,.07)', 'rgba(255,90,54,.05)');
+  const u = t - 29.6;
+  const cx = 960, cy = 500;
+  const labels = ['spec', 'build', 'review', 'ship'];
+  const ang = -Math.PI / 2 + u * .18;
+  const R = 250 + beat(t) * 8;
+  // diamond connectors
+  const pts = labels.map((_, i) => {
+    const a = ang + i * TAU / 4;
+    return [cx + Math.cos(a) * R, cy + Math.sin(a) * R];
+  });
+  ctx.save(); ctx.strokeStyle = C.ink; ctx.globalAlpha = .18; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < 4; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.closePath(); ctx.stroke(); ctx.restore();
+  // nodes
+  pts.forEach(([x, y], i) => {
+    const a = clamp((u - i * .12) / .5);
+    const s = 1 + beat(t) * .06;
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    dot(0, 0, 7, C.blue, a);
+    ring(0, 0, 46, C.ink, .22 * a, 1);
+    T(labels[i], 0, 78, 40, { color: C.ink, align: 'center', alpha: a });
+    ctx.restore();
+  });
+  T('the loop you will practise', cx, cy + 380, 16, { kind: 'mono', color: C.dim, align: 'center', alpha: clamp((u - .8) / .8), ls: 3 });
+  T('vibe-coding', 140, 140, 22, { kind: 'mono', weight: 700, color: C.ink, alpha: .8 });
+  T('a six-week course in shipping with agents', 140, 172, 13, { kind: 'mono', color: C.dim, alpha: .8 });
+  // moving pulse dot around the diamond
+  const k = (u * .35) % 1; const seg = Math.floor(k * 4); const lt = k * 4 - seg;
+  const A = pts[seg], B = pts[(seg + 1) % 4];
+  dot(lerp(A[0], B[0], lt), lerp(A[1], B[1], lt), 3, C.ember, .9);
+  grainOverlay(.045); vignette(.06);
+}
+
+function s6(t) { // 40.8 - 51.4 : the course system
+  bg(false);
+  const u = t - 40.8;
+  const cx = 1320, cy = 540;
+  // 19 cards stack
+  for (let i = 0; i < 19; i++) {
+    const a = clamp((u - i * .035) / .4);
+    const off = i * 9;
+    ctx.save();
+    ctx.globalAlpha = .9 * a;
+    ctx.translate(cx + off * .6, cy - off * .8);
+    ctx.rotate(-0.16);
+    ctx.fillStyle = C.cream; ctx.strokeStyle = 'rgba(32,29,29,.16)'; ctx.lineWidth = 1;
+    ctx.fillRect(-220, -140, 440, 280);
+    ctx.strokeRect(-220, -140, 440, 280);
+    ctx.fillStyle = 'rgba(32,29,29,.10)';
+    ctx.fillRect(-190, -110, 180, 8);
+    ctx.fillRect(-190, -90, 120, 5);
+    ctx.fillStyle = C.blue; ctx.globalAlpha = .5 * a;
+    ctx.fillRect(-190, 90, 40 + hash(i) * 60, 4);
+    ctx.restore();
+  }
+  // module bars
+  for (let i = 0; i < 6; i++) {
+    const a = clamp((u - .2 - i * .1) / .5);
+    const w = 40 + hash(i * 3.1) * 90;
+    ctx.fillStyle = C.ink; ctx.globalAlpha = .18 * a;
+    ctx.fillRect(140, 720 + i * 26, w * a, 8);
+  }
+  T('the course', 140, 240, 14, { kind: 'mono', color: C.dim, ls: 3 });
+  words('19 lessons.', 140, 360, 78, u - .2, { color: C.ink });
+  words('6 modules.', 140, 450, 78, u - .45, { color: C.ink });
+  words('One capstone.', 140, 540, 78, u - .7, { color: C.ink });
+  T('labs in the terminal · checkpoints · a certificate that prints', 140, 630, 15, { kind: 'mono', color: C.dim, alpha: clamp((u - 1.1) / .7) });
+  grainOverlay(.04); vignette(.05);
+}
+
+function s7(t) { // 51.4 - 60 : the tools
+  bg(true);
+  mesh(t, 'rgba(47,107,255,.10)', 'rgba(255,90,54,.05)');
+  const u = t - 51.4;
+  const y = 520;
+  // terminal node
+  ctx.save(); ctx.globalAlpha = clamp((u - .1) / .6);
+  ctx.fillStyle = 'rgba(253,252,252,.04)'; ctx.strokeStyle = 'rgba(253,252,252,.22)';
+  ctx.lineWidth = 1; ctx.fillRect(180, y - 170, 560, 340); ctx.strokeRect(180, y - 170, 560, 340);
+  T('opencode', 210, y - 120, 26, { kind: 'mono', weight: 700, color: C.cream });
+  T('$ opencode', 210, y - 70, 16, { kind: 'mono', color: C.gray });
+  T('› plan the change', 210, y - 38, 16, { kind: 'mono', color: C.cream });
+  T('● Read  index.html', 210, y + 2, 14, { kind: 'mono', color: C.gray });
+  T('● Edit  +128 −2', 210, y + 30, 14, { kind: 'mono', color: C.gray });
+  T('✔ ready', 210, y + 62, 14, { kind: 'mono', color: '#7ee787' });
+  ctx.restore();
+  // browser node
+  ctx.save(); ctx.globalAlpha = clamp((u - .5) / .6);
+  ctx.fillStyle = 'rgba(253,252,252,.04)'; ctx.strokeStyle = 'rgba(253,252,252,.22)';
+  ctx.lineWidth = 1; ctx.fillRect(1180, y - 170, 560, 340); ctx.strokeRect(1180, y - 170, 560, 340);
+  ctx.fillStyle = 'rgba(253,252,252,.10)'; ctx.fillRect(1180, y - 170, 560, 30);
+  dot(1200, y - 155, 3, C.ember); dot(1214, y - 155, 3, '#febc2e'); dot(1228, y - 155, 3, '#28c840');
+  T('playwright', 1210, y - 120, 26, { kind: 'mono', weight: 700, color: C.cream });
+  T('navigate → click → snapshot', 1210, y - 70, 14, { kind: 'mono', color: C.gray });
+  T('the page is real.', 1210, y - 20, 16, { kind: 'mono', color: C.cream });
+  ctx.restore();
+  // connector
+  const cp = easeInOut(clamp((u - .9) / 1));
+  line(740, y, 740 + 440 * cp, y, C.blue, .7, 2);
+  dot(740 + 440 * cp, y, 4, C.blue, 1);
+  // cursor travels
+  const mx = lerp(700, 1240, easeInOut(clamp((u - 2) / 2)));
+  cursor(mx, y + 60, 1, C.cream);
+  T('the agent acts.', 140, 900, 18, { kind: 'mono', color: C.gray, alpha: clamp((u - 2) / .8) });
+  T('you review.', 140, 932, 18, { kind: 'mono', color: C.cream, alpha: clamp((u - 2.6) / .8) });
+  grainOverlay(.055); vignette(.5);
+}
+
+function s8(t) { // 60 - 70 : proof cards
+  bg(false);
+  const u = t - 60;
+  // card 1 : flowchart
+  ctx.save();
+  ctx.globalAlpha = clamp((u - .1) / .7);
+  ctx.translate(480, 560); ctx.rotate(-0.05);
+  ctx.fillStyle = C.cream; ctx.strokeStyle = 'rgba(32,29,29,.16)'; ctx.lineWidth = 1;
+  ctx.fillRect(-300, -230, 600, 460); ctx.strokeRect(-300, -230, 600, 460);
+  T('gostpadi', -270, -190, 22, { kind: 'mono', weight: 700, color: C.ink });
+  T('C → ГОСТ 19.701', -270, -160, 11, { kind: 'mono', color: C.dim });
+  // flowchart
+  const nodes = [[-120, -80], [0, -10], [120, -80], [0, 80], [0, 160]];
+  const prog = easeOut(clamp((u - .5) / 2.5));
+  ctx.strokeStyle = C.ink; ctx.globalAlpha = .5 * prog; ctx.lineWidth = 1.5;
+  nodes.forEach(([x, y], i) => {
+    ctx.beginPath(); ctx.arc(x, y, 22, 0, TAU); ctx.stroke();
+  });
+  line(-120, -58, 0, -30, C.ink, .5 * prog, 1.5);
+  line(0, 10, -100, -60, C.ink, .5 * prog, 1.5);
+  line(0, 10, 100, -60, C.ink, .5 * prog, 1.5);
+  line(0, 10, 0, 58, C.ink, .5 * prog, 1.5);
+  line(0, 102, 0, 138, C.ink, .5 * prog, 1.5);
+  ctx.restore();
+  // card 2 : A4
+  ctx.save();
+  ctx.globalAlpha = clamp((u - .6) / .7);
+  ctx.translate(1420, 560); ctx.rotate(0.05);
+  ctx.fillStyle = C.cream; ctx.strokeStyle = 'rgba(32,29,29,.16)'; ctx.lineWidth = 1;
+  ctx.fillRect(-260, -320, 520, 640); ctx.strokeRect(-260, -320, 520, 640);
+  T('labpad', -230, -280, 22, { kind: 'mono', weight: 700, color: C.ink });
+  T('A4 · схема · PDF', -230, -250, 11, { kind: 'mono', color: C.dim });
+  for (let i = 0; i < 9; i++) { ctx.fillStyle = 'rgba(32,29,29,.14)'; ctx.fillRect(-220, -190 + i * 34, 300 - (i % 3) * 40, 5); }
+  // mini scheme
+  ctx.strokeStyle = C.ink; ctx.globalAlpha = .45 * prog; ctx.lineWidth = 1.2;
+  ctx.strokeRect(-80, 150, 120, 36);
+  ctx.beginPath(); ctx.moveTo(-20, 150); ctx.lineTo(-20, 120); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-20, 120); ctx.lineTo(40, 120); ctx.stroke();
+  ctx.restore();
+  T('built with the loop', 140, 940, 16, { kind: 'mono', color: C.dim, alpha: clamp((u - 1.2) / .8), ls: 3 });
+  grainOverlay(.04); vignette(.05);
+}
+
+function s9(t) { // 70 - 77 : gostpadi
+  bg(true);
+  mesh(t, 'rgba(47,107,255,.10)', 'rgba(0,0,0,0)');
+  const u = t - 70;
+  // code lines
+  for (let i = 0; i < 12; i++) {
+    const a = clamp((u - i * .04) / .5);
+    ctx.fillStyle = i % 4 === 0 ? C.blue : C.gray;
+    ctx.globalAlpha = .35 * a;
+    ctx.fillRect(140, 240 + i * 26, 40 + hash(i * 5.1) * 140, 4);
+  }
+  ctx.globalAlpha = 1;
+  // flowchart
+  const cx = 1240, cy = 520;
+  const prog = easeOut(clamp((u - .3) / 3));
+  const nodes = [[cx, cy - 210], [cx, cy - 110], [cx - 150, cy], [cx + 150, cy], [cx, cy + 110], [cx, cy + 220]];
+  const edges = [[0, 1], [1, 2], [1, 3], [2, 4], [3, 4], [4, 5]];
+  ctx.save(); ctx.globalAlpha = .5 * prog; ctx.strokeStyle = C.cream; ctx.lineWidth = 1.5;
+  edges.forEach(([a, b], i) => {
+    if (prog > i / edges.length) {
+      const A = nodes[a], B = nodes[b];
+      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke();
+    }
+  });
+  nodes.forEach(([x, y], i) => {
+    const a = clamp((u - .3 - i * .18) / .5);
+    ctx.globalAlpha = a;
+    ctx.fillStyle = C.ink; ctx.strokeStyle = C.cream; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(x, y, 26, 0, TAU); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.cream; ctx.globalAlpha = .8 * a;
+    ctx.fillRect(x - 14, y - 2, 28, 2);
+  });
+  ctx.restore();
+  T('built with opencode', 140, 700, 14, { kind: 'mono', color: C.gray, ls: 3, alpha: clamp((u - 1) / .7) });
+  T('gostpadi.', 140, 790, 84, { color: C.cream, alpha: clamp((u - 1.2) / .7) });
+  T('block schemes from C — in milliseconds.', 140, 840, 16, { kind: 'mono', color: C.gray, alpha: clamp((u - 1.5) / .7) });
+  grainOverlay(.055); vignette(.5);
+}
+
+function s10(t) { // 77 - 81.8 : labpad
+  bg(false);
+  const u = t - 77;
+  // A4
+  ctx.save();
+  ctx.globalAlpha = clamp((u - .1) / .6);
+  ctx.translate(1300, 540); ctx.rotate(0.04);
+  ctx.fillStyle = C.cream; ctx.strokeStyle = 'rgba(32,29,29,.18)'; ctx.lineWidth = 1;
+  ctx.fillRect(-280, -350, 560, 700); ctx.strokeRect(-280, -350, 560, 700);
+  T('ЛАБОРАТОРНАЯ РАБОТА № 1', 0, -290, 18, { kind: 'mono', color: C.ink, align: 'center' });
+  for (let i = 0; i < 12; i++) { ctx.fillStyle = 'rgba(32,29,29,.12)'; ctx.fillRect(-230, -220 + i * 38, 460 - (i % 4) * 70, 5); }
+  // scheme
+  ctx.strokeStyle = C.ink; ctx.globalAlpha = .5 * clamp((u - .8) / 1.4); ctx.lineWidth = 1.4;
+  const bx = 0, by = 210;
+  ctx.strokeRect(bx - 70, by, 140, 40);
+  ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx, by - 40); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(bx, by - 40); ctx.lineTo(bx + 90, by - 40); ctx.stroke();
+  ctx.strokeRect(bx + 40, by - 80, 100, 36);
+  ctx.restore();
+  T('built with opencode', 140, 340, 14, { kind: 'mono', color: C.dim, ls: 3, alpha: clamp((u - .4) / .7) });
+  T('labpad.', 140, 450, 84, { color: C.ink, alpha: clamp((u - .6) / .7) });
+  T('lab reports on A4: condition, scheme, code, output.', 140, 510, 16, { kind: 'mono', color: C.dim, alpha: clamp((u - .9) / .7) });
+  T('one click to PDF.', 140, 540, 16, { kind: 'mono', color: C.ink, alpha: clamp((u - 1.1) / .7) });
+  grainOverlay(.04); vignette(.05);
+}
+
+function s11(t) { // 81.8 - 86.8 : stats
+  bg(true);
+  const u = t - 81.8;
+  const items = [['6', 'weeks'], ['36', 'hours'], ['19', 'lessons'], ['$290', 'full course']];
+  items.forEach(([n, l], i) => {
+    const x = 150 + i * 440;
+    const a = clamp((u - i * .12) / .5);
+    const s = 1 + beat(t) * .03;
+    ctx.save(); ctx.translate(x, 560); ctx.scale(s, s);
+    T(n, 0, 0, 120, { color: C.cream, alpha: a });
+    T(l, 0, 44, 13, { kind: 'mono', color: C.gray, alpha: a, ls: 3 });
+    line(0, 80, 300 * a, 80, C.blue, .7, 2);
+    ctx.restore();
+  });
+  T('cohort 04 · 12–16 seats', 150, 240, 14, { kind: 'mono', color: C.gray, ls: 3, alpha: clamp((u - .2) / .6) });
+  T('early bird $240 until 3 November.', 150, 760, 16, { kind: 'mono', color: C.cream, alpha: clamp((u - .9) / .7) });
+  grainOverlay(.05); vignette(.5);
+}
+
+function s12(t) { // 86.8 - 95.4 : certificate
+  bg(false);
+  const u = t - 86.8;
+  const cx = 1300, cy = 520;
+  const a = clamp((u - .1) / .8);
+  ctx.save(); ctx.globalAlpha = a;
+  ctx.fillStyle = C.cream; ctx.strokeStyle = 'rgba(32,29,29,.18)'; ctx.lineWidth = 1;
+  ctx.fillRect(cx - 380, cy - 280, 760, 560); ctx.strokeRect(cx - 380, cy - 280, 760, 560);
+  T('CERTIFICATE OF COMPLETION', cx, cy - 210, 12, { kind: 'mono', color: C.dim, align: 'center', ls: 4 });
+  T('Vibe Coding', cx, cy - 130, 54, { color: C.ink, align: 'center' });
+  T('AI-assisted software development · 36 hours', cx, cy - 90, 12, { kind: 'mono', color: C.dim, align: 'center' });
+  T('reviewed capstone', cx, cy - 10, 34, { color: C.ink, align: 'center', italic: true });
+  line(cx - 260, cy + 80, cx + 260, cy + 80, C.ink, .2, 1);
+  T('IT faculty partner', cx - 260, cy + 120, 11, { kind: 'mono', color: C.dim });
+  T('verification link', cx + 260, cy + 120, 11, { kind: 'mono', color: C.dim, align: 'right' });
+  // seal
+  const sealR = 86 + beat(t) * 3;
+  ring(cx + 300, cy - 210, sealR, C.blue, .8, 2);
+  ring(cx + 300, cy - 210, sealR - 10, C.blue, .35, 1);
+  T('✓', cx + 300, cy - 190, 44, { color: C.blue, align: 'center' });
+  ctx.restore();
+  T('what you leave with', 140, 300, 14, { kind: 'mono', color: C.dim, ls: 3, alpha: clamp((u - .3) / .6) });
+  T('a reviewed capstone.', 140, 420, 64, { color: C.ink, alpha: clamp((u - .5) / .7) });
+  T('Denis · Danik · Mukhammed · Arseniy', 140, 760, 14, { kind: 'mono', color: C.dim, alpha: clamp((u - 1) / .7) });
+  grainOverlay(.04); vignette(.05);
+}
+
+function s13(t) { // 95.4 - 108.5 : end
+  bg(true);
+  mesh(t, 'rgba(47,107,255,.08)', 'rgba(255,90,54,.06)');
+  const u = t - 95.4;
+  const fade = clamp((107.0 - t) / 1.4);
+  ctx.save(); ctx.globalAlpha = fade;
+  if (wm.complete) { const w = 300, h = w * wm.height / wm.width; ctx.drawImage(wm, 140, 280, w, h); }
+  words('Ship apps', 140, 520, 100, u - .2, { color: C.cream });
+  const aBy = clamp((u - .5) / .6);
+  T('by', 140, 625, 100, { color: C.cream, alpha: aBy });
+  T('vibes.', 140 + measure('by ', 100), 625, 100, { italic: true, color: C.blue, alpha: clamp((u - .65) / .6) });
+  T('vibe-coding.dev — cohort 04 starts Nov 10', 140, 760, 20, { kind: 'mono', color: C.cream, alpha: clamp((u - .9) / .7) });
+  T('Denis · Danik · Mukhammed · Arseniy', 140, 940, 13, { kind: 'mono', color: C.dim, alpha: clamp((u - 1.2) / .7) });
+  if (qr.complete) { const q = 150; ctx.globalAlpha = fade * clamp((u - 1) / .7); ctx.fillStyle = C.cream; ctx.fillRect(1620, 800, q, q); ctx.drawImage(qr, 1628, 808, q - 16, q - 16); }
+  ctx.restore();
+  grainOverlay(.05); vignette(.55);
+}
+
+const SCENES = [
+  [0, 5.5, s0], [5.5, 8.2, s1], [8.2, 13, s2], [13, 26.6, s3], [26.6, 29.6, s4],
+  [29.6, 40.8, s5], [40.8, 51.4, s6], [51.4, 60, s7], [60, 70, s8],
+  [70, 77, s9], [77, 81.8, s10], [81.8, 86.8, s11], [86.8, 95.4, s12], [95.4, 108.54, s13]
+];
+
+function render(t) {
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  ctx.clearRect(0, 0, W, H);
+  const sc = SCENES.find(([a, b]) => t >= a && t < b) || SCENES[SCENES.length - 1];
+  sc[2](t);
+}
+
+window.seek = (t) => { render(t); };
+window.__ready = false;
+Promise.all([
+  document.fonts.load('400 96px "Instrument Serif"'),
+  document.fonts.load('italic 400 96px "Instrument Serif"'),
+  document.fonts.load('400 16px "JetBrains Mono"'),
+  document.fonts.load('700 96px "JetBrains Mono"'),
+  new Promise(r => { if (wm.complete) r(); else wm.onload = r; }),
+  new Promise(r => { if (qr.complete) r(); else qr.onload = r; })
+]).then(() => { window.__ready = true; render(0); });
+</script>
+</body>
+</html>

@@ -1,4 +1,9 @@
 node_modules/
 video/raw/
 video/music/
+video/promo/frames/
+video/promo/out/raw/
+video/term/out/raw/
+video/real/out/
+video/promo/node_modules/
 .DS_Store

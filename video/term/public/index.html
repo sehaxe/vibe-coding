@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>opencode — live</title>
+<link rel="stylesheet" href="/xterm.css">
+<style>
+  @font-face{font-family:"JetBrains Mono";src:url("/JetBrainsMono-var.woff2") format("woff2");font-weight:400 700;font-display:swap}
+  *{box-sizing:border-box}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#0d0b0b;font-family:-apple-system,system-ui,sans-serif}
+  .wall{position:absolute;inset:0;background:
+    radial-gradient(900px 700px at 20% 15%,#2a2320 0%,rgba(42,35,32,0) 60%),
+    radial-gradient(1000px 800px at 85% 25%,#1d2530 0%,rgba(29,37,48,0) 62%),
+    radial-gradient(900px 700px at 55% 100%,#2a2030 0%,rgba(42,32,48,0) 60%),
+    #0d0b0b}
+  .win{position:absolute;left:180px;top:90px;width:1560px;height:900px;background:#141212;border-radius:12px;overflow:hidden;box-shadow:0 60px 160px rgba(0,0,0,.6),0 0 0 .5px rgba(253,252,252,.12)}
+  .bar{height:38px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#1b1818;border-bottom:1px solid rgba(253,252,252,.08);position:relative}
+  .lights{display:flex;gap:8px}
+  .lights i{width:12px;height:12px;border-radius:50%;display:block}
+  .lights i:nth-child(1){background:#ff5f57}.lights i:nth-child(2){background:#febc2e}.lights i:nth-child(3){background:#28c840}
+  .title{position:absolute;left:0;right:0;text-align:center;font:12px "JetBrains Mono",monospace;color:#8e8b8b;pointer-events:none}
+  .live{margin-left:auto;display:flex;align-items:center;gap:6px;font:10px "JetBrains Mono",monospace;color:#8e8b8b;z-index:2}
+  .live i{width:6px;height:6px;border-radius:50%;background:#30d158;display:block;animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  #term{position:absolute;top:38px;left:0;right:0;bottom:0;padding:14px 16px;background:#141212}
+  .xterm .xterm-viewport{background:#141212!important}
+  .hint{position:absolute;left:180px;bottom:44px;font:11px "JetBrains Mono",monospace;color:rgba(253,252,252,.35);letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wall"></div>
+<div class="win">
+  <div class="bar"><div class="lights"><i></i><i></i><i></i></div><div class="title">opencode — ~/vibe-demo — live session</div><div class="live"><i></i>LIVE</div></div>
+  <div id="term"></div>
+</div>
+<div class="hint">real pty · real opencode · no mock</div>
+<script src="/xterm.js"></script>
+<script>
+  const term = new Terminal({
+    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+    fontSize: 15,
+    cols: 150,
+    rows: 42,
+    lineHeight: 1.25,
+    letterSpacing: 0,
+    cursorBlink: true,
+    cursorStyle: 'block',
+    scrollback: 2000,
+    allowProposedApi: true,
+    theme: {
+      background: '#141212', foreground: '#fdfcfc', cursor: '#fdfcfc',
+      black: '#141212', red: '#ff7b72', green: '#7ee787', yellow: '#f2cc60',
+      blue: '#79c0ff', magenta: '#d2a8ff', cyan: '#56d4dd', white: '#fdfcfc',
+      brightBlack: '#6e6e73', brightRed: '#ffa198', brightGreen: '#aff5b4',
+      brightYellow: '#f8e3a1', brightBlue: '#a5d6ff', brightMagenta: '#e2c5ff',
+      brightCyan: '#9beef7', brightWhite: '#ffffff'
+    }
+  });
+  term.open(document.getElementById('term'));
+  term.focus();
+  const ws = new WebSocket('ws://' + location.host + '/ws');
+  ws.binaryType = 'arraybuffer';
+  ws.onmessage = (e) => term.write(new Uint8Array(e.data));
+  ws.onopen = () => term.focus();
+  term.onData((d) => { if (ws.readyState === 1) ws.send(d); });
+  window.term = term;
+</script>
+</body>
+</html>
