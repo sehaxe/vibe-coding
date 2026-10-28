@@ -46,6 +46,38 @@
   ]
 }
 
+// soft glows
+#for i in range(0, 10) {
+  place(top + left, dx: 420mm, dy: 0mm)[
+    #circle(radius: (110 - i * 9) * 1mm, fill: blue.transparentize(97%))
+  ]
+}
+#for i in range(0, 10) {
+  place(top + left, dx: 0mm, dy: 594mm)[
+    #circle(radius: (100 - i * 8) * 1mm, fill: ember.transparentize(97%))
+  ]
+}
+
+// code rain
+#for i in range(0, 18) {
+  for j in range(0, 12) {
+    place(top + left, dx: i * 23mm, dy: j * 46mm + calc.rem(i * 17, 22) * 1mm)[
+      #text(font: mono, size: 5.5pt, fill: cream.transparentize(96%))[
+        #if calc.rem(i + j, 3) == 0 { "01" } else { "10" }
+      ]
+    ]
+  }
+}
+
+#place(top + left, dx: 161mm, dy: 230mm)[
+  #text(font: mono, size: 5.5pt, fill: cream.transparentize(96%))[fsociety]
+]
+
+// ghost 04
+#place(top + left, dx: 278mm, dy: 64mm)[
+  #text(size: 190pt, fill: cream.transparentize(97%))[04]
+]
+
 // corner brackets
 #place(top + left, dx: 12mm, dy: 12mm)[#line(length: 34mm, stroke: 0.6pt + blue)]
 #place(top + left, dx: 12mm, dy: 12mm)[#line(length: 34mm, angle: 90deg, stroke: 0.6pt + blue)]
@@ -70,6 +102,29 @@
 ]
 #place(top + left, dx: 24mm, dy: 34mm)[
   #line(length: 372mm, stroke: 0.4pt + cream.transparentize(82%))
+]
+
+// mr. robot microcopy
+#place(top + left, dx: 24mm, dy: 66mm)[
+  #text(font: mono, size: 7pt, fill: faint)[hello, friend.]
+]
+#place(top + right, dx: -24mm, dy: 38mm)[
+  #text(font: mono, size: 4.2pt, tracking: 0.14em, fill: faint)[E-CORP · INTERNAL USE ONLY]
+]
+#place(top + right, dx: -24mm, dy: 43mm)[
+  #text(font: mono, size: 4.2pt, fill: ember.transparentize(35%))[● REC 00:04:13]
+]
+
+// hidden fsociety / control
+#place(top + left, dx: 410mm, dy: 300mm)[
+  #rotate(-90deg, origin: top + left)[
+    #text(font: mono, size: 4.2pt, tracking: 0.24em, fill: cream.transparentize(93%))[fsociety]
+  ]
+]
+#place(top + left, dx: 410mm, dy: 380mm)[
+  #rotate(-90deg, origin: top + left)[
+    #text(font: mono, size: 3.8pt, tracking: 0.2em, fill: cream.transparentize(95%))[CONTROL IS AN ILLUSION]
+  ]
 ]
 
 // ---------- glitch helper ----------
@@ -118,70 +173,36 @@
   #text(font: mono, size: 9pt, tracking: 0.24em, fill: ember.transparentize(20%))[fix. fix. fix. fix. fix. fix.]
 ]
 
-// ---------- terminal card ----------
-#place(top + left, dx: 24mm, dy: 326mm)[
-  #block(width: 372mm, height: 90mm, fill: rgb("#141212"), stroke: 0.45pt + cream.transparentize(84%))[
-    #rect(width: 100%, height: 9mm, fill: rgb("#1b1818"))
-    #place(top + left, dx: 5mm, dy: 3mm)[
-      #circle(radius: 1.2mm, fill: rgb("#ff5f57"))
-      #h(1.2mm)
-      #circle(radius: 1.2mm, fill: rgb("#febc2e"))
-      #h(1.2mm)
-      #circle(radius: 1.2mm, fill: rgb("#28c840"))
-    ]
-    #place(top + left, dx: 0mm, dy: 3mm)[
-      #block(width: 100%)[
-        #align(center)[
-          #text(font: mono, size: 7pt, fill: faint)[opencode — ~/vibe-demo — live]
-        ]
-      ]
-    ]
-    #place(top + left, dx: 10mm, dy: 16mm)[
-      #set par(leading: 1.35em)
-      #text(font: mono, size: 10pt)[
-        #text(fill: blue)[\$] opencode
-        #linebreak()
-        #text(fill: blue)[›] build a landing page for a coffee shop
-        #linebreak()
-        #text(fill: faint)[●] Read  #text(fill: cream)[site/index.html]
-        #linebreak()
-        #text(fill: faint)[●] Write #text(fill: cream)[site/index.html]  #text(fill: rgb("#7ee787"))[+128]
-        #linebreak()
-        #text(fill: faint)[●] Bash  #text(fill: cream)[npm run dev]
-        #linebreak()
-        #text(fill: rgb("#7ee787"))[✔ ready in 412ms]  #text(fill: faint)[— localhost:3000]
-        #linebreak()
-        #text(fill: faint)[●] Review  #text(fill: cream)[diff]  #text(fill: rgb("#7ee787"))[2 files]
-        #linebreak()
-        #text(fill: rgb("#7ee787"))[✔ tests pass]  #text(fill: faint)[14/14]
-        #linebreak()
-        #text(fill: faint)[●] Commit  #text(fill: cream)["ship it"]
-        #linebreak()
-        #text(fill: rgb("#7ee787"))[✔ shipped]  #text(fill: faint)[— 1 file changed]
-        #linebreak()
-        #text(fill: blue)[›] #text(fill: cream)[\_]
-      ]
-    ]
-    // glitch bars inside the terminal
-    #place(top + left, dx: 0mm, dy: 62mm)[
-      #rect(width: 100%, height: 2mm, fill: blue.transparentize(86%))
-    ]
-    #place(top + left, dx: 0mm, dy: 94mm)[
-      #rect(width: 100%, height: 1.2mm, fill: ember.transparentize(88%))
-    ]
+// ---------- giant fix ----------
+#place(top + left, dx: 22mm, dy: 336mm)[
+  #text(size: 250pt, style: "italic", fill: blue.transparentize(55%))[fix.]
+]
+#place(top + left, dx: 26mm, dy: 340mm)[
+  #text(size: 250pt, style: "italic", fill: ember.transparentize(55%))[fix.]
+]
+#place(top + left, dx: 24mm, dy: 338mm)[
+  #text(size: 250pt, style: "italic", fill: ember)[fix.]
+]
+
+// glitch slices over the fix
+#for (y, h, c) in ((352mm, 2.2mm, blue), (382mm, 1.2mm, cream), (410mm, 2.8mm, blue), (432mm, 1.4mm, ember)) {
+  place(top + left, dx: 20mm, dy: y)[
+    #rect(width: 380mm, height: h, fill: c.transparentize(88%))
   ]
+}
+
+// quiet mr. robot line
+#place(top + left, dx: 24mm, dy: 462mm)[
+  #text(font: mono, size: 7.5pt, tracking: 0.24em, fill: cream.transparentize(80%))[CONTROL IS AN ILLUSION.]
 ]
 
 // ---------- footer ----------
-#place(top + left, dx: 24mm, dy: 436mm)[
-  #text(font: mono, size: 8.5pt, tracking: 0.2em, fill: cream)[SPEC → BUILD → REVIEW → SHIP]
-]
-#place(top + left, dx: 24mm, dy: 446mm)[
+#place(top + left, dx: 24mm, dy: 528mm)[
   #text(font: mono, size: 6.5pt, tracking: 0.14em, fill: faint)[A SIX-WEEK COURSE IN SHIPPING WITH AGENTS · 19 LESSONS · 36 HOURS]
 ]
 
 // barcode
-#place(top + left, dx: 24mm, dy: 474mm)[
+#place(top + left, dx: 24mm, dy: 550mm)[
   #for i in range(0, 34) {
     let w = if calc.rem(i, 3) == 0 { 0.9mm } else { 0.35mm }
     let gap = if calc.rem(i, 5) == 0 { 1.6mm } else { 0.8mm }
@@ -189,21 +210,23 @@
     h(gap)
   }
   #v(2mm)
-  #text(font: mono, size: 6pt, tracking: 0.22em, fill: faint)[VC-04-2026 · STATEMENT]
+  #text(font: mono, size: 6pt, tracking: 0.22em, fill: faint)[VC-04-2026 · fsociety]
 ]
 
 // QR
-#place(top + left, dx: 342mm, dy: 448mm)[
+#place(top + left, dx: 342mm, dy: 500mm)[
   #box(fill: white, inset: 2mm, stroke: 0.35pt + cream.transparentize(80%))[
     #image("assets/qr.png", width: 32mm)
   ]
   #v(1.2mm)
-  #text(font: mono, size: 4.8pt, tracking: 0.12em, fill: faint)[THE LOOP]
+  #text(font: mono, size: 4.8pt, tracking: 0.12em, fill: faint)[SCAN THE COURSE]
+  #v(0.8mm)
+  #text(font: mono, size: 3.8pt, tracking: 0.1em, fill: faint)[ONE MORE THING...]
 ]
 
-#place(top + left, dx: 24mm, dy: 566mm)[
+#place(top + left, dx: 24mm, dy: 580mm)[
   #text(font: mono, size: 5.8pt, tracking: 0.1em, fill: faint)[sehaxe.github.io/vibe-coding]
 ]
-#place(top + right, dx: -24mm, dy: 566mm)[
+#place(top + right, dx: -24mm, dy: 580mm)[
   #text(font: mono, size: 5.8pt, tracking: 0.1em, fill: faint)[DENIS · DANIK · MUKHAMMED · ARSENIY]
 ]
