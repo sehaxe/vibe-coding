@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vibe Coding — poster</title>
+<style>
+  @font-face{font-family:"JetBrains Mono";src:url("../site/assets/fonts/JetBrainsMono-var.woff2") format("woff2");font-weight:400 700;font-display:swap}
+  @font-face{font-family:"Instrument Serif";src:url("../site/assets/fonts/InstrumentSerif-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Instrument Serif";src:url("../site/assets/fonts/InstrumentSerif-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+  :root{--mono:"JetBrains Mono",monospace;--serif:"Instrument Serif",Georgia,serif;--ink:#201d1d;--body:#424245;--mute:#646262;--faint:#9a9898;--line:rgba(15,0,0,.14);--bg:#fdfcfc;--dark:#201d1d;--on:#fdfcfc}
+  *{box-sizing:border-box}
+  @page{size:A2 portrait;margin:0}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+  body{font-family:var(--mono);-webkit-font-smoothing:antialiased}
+  .poster{width:420mm;height:594mm;padding:22mm 20mm 18mm;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden}
+  .top{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:6mm}
+  .logo{width:66mm;height:auto;display:block}
+  .tag{font-size:3.4mm;color:var(--mute);text-align:right;line-height:1.6}
+  h1{font-family:var(--serif);font-weight:400;font-size:26mm;line-height:.98;letter-spacing:-.015em;margin:9mm 0 5mm}
+  h1 em{font-style:italic}
+  .sub{font-size:4.2mm;line-height:1.6;color:var(--body);max-width:300mm;margin:0 0 8mm}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 12mm;border-top:1px solid var(--line)}
+  .cell{padding:4.6mm 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:9mm 1fr;gap:4mm}
+  .cell .n{font-size:3.2mm;color:var(--faint);padding-top:.6mm}
+  .cell h3{font-size:3.8mm;margin:0 0 1.2mm;font-weight:700}
+  .cell p{margin:0;font-size:3.4mm;line-height:1.55;color:var(--body)}
+  .mid{display:grid;grid-template-columns:1.05fr .95fr;gap:12mm;margin-top:8mm}
+  .box{border:1px solid var(--line);padding:6mm}
+  .box h2{font-family:var(--serif);font-size:9mm;font-weight:400;margin:0 0 4mm}
+  .mods{list-style:none;margin:0;padding:0;font-size:3.3mm;line-height:1.5}
+  .mods li{display:grid;grid-template-columns:7mm 1fr;gap:3mm;padding:2.4mm 0;border-bottom:1px solid var(--line)}
+  .mods li:last-child{border-bottom:0}
+  .mods .mn{color:var(--faint)}
+  .mods b{font-weight:700}
+  .mods span{color:var(--body)}
+  .facts{list-style:none;margin:0;padding:0;font-size:3.4mm;line-height:1.6}
+  .facts li{display:grid;grid-template-columns:6mm 1fr;gap:2mm;padding:1.8mm 0;border-bottom:1px solid var(--line)}
+  .facts li:last-child{border-bottom:0}
+  .facts .m{color:var(--mute)}
+  .price{font-family:var(--serif);font-size:20mm;line-height:1;margin:2mm 0 1mm}
+  .small{font-size:3.1mm;color:var(--mute)}
+  .band{background:var(--dark);color:var(--on);margin-top:8mm;padding:9mm 12mm;display:flex;align-items:center;gap:12mm}
+  .band-logo{width:58mm;height:auto;display:block;flex:none}
+  .band p{margin:0;font-size:3.6mm;line-height:1.6;color:var(--on);opacity:.82;max-width:210mm}
+  .bottom{margin-top:auto;display:grid;grid-template-columns:1fr 46mm;gap:10mm;align-items:end;border-top:1px solid var(--line);padding-top:6mm}
+  .team{font-size:3mm;color:var(--mute);line-height:1.8}
+  .team b{color:var(--ink);font-weight:700}
+  .qr{width:46mm;height:46mm;border:1px solid var(--line);padding:2mm;background:#fff}
+  .qr img{width:100%;height:100%;object-fit:contain;display:block}
+  .foot{display:flex;justify-content:space-between;font-size:2.8mm;color:var(--faint);margin-top:4mm}
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="top">
+    <img class="logo" src="../site/assets/brand/opencode-wordmark-light.png" alt="OpenCode">
+    <div class="tag">vibe-coding<br>cohort 04 · starts 10 nov 2026</div>
+  </div>
+
+  <h1>Ship apps<br>by <em>vibes.</em><br>Not by syntax.</h1>
+  <p class="sub">A six-week online course for IT students and junior developers. Learn to build with AI agents, review what they write, and ship a feature that survives production. Practised in OpenCode.</p>
+
+  <div class="grid">
+    <div class="cell"><div class="n">01</div><div><h3>Target audience</h3><p>2nd–4th year IT students and junior developers with 0–2 years of experience who already write code but use AI tools chaotically.</p></div></div>
+    <div class="cell"><div class="n">02</div><div><h3>Learners’ needs</h3><p>Employers expect AI literacy. Juniors need to prompt well, verify generated code, avoid security and licensing traps, and grow their speed safely.</p></div></div>
+    <div class="cell"><div class="n">03</div><div><h3>Training goals</h3><p>By the end, a learner can write effective prompts, embed AI in the SDLC, review and test AI code, use it securely, and measure the productivity gain.</p></div></div>
+    <div class="cell"><div class="n">04</div><div><h3>Course overview</h3><p>Six modules: LLM basics, prompt engineering, the agentic workflow, code review, debugging and docs, and a capstone shipped end-to-end.</p></div></div>
+    <div class="cell"><div class="n">05</div><div><h3>Duration &amp; schedule</h3><p>Six weeks · two live 90-minute sessions per week · 36 hours total · evening groups · recordings and async review between sessions.</p></div></div>
+    <div class="cell"><div class="n">06</div><div><h3>Admission requirements</h3><p>Basic Python or JavaScript, Git fundamentals, English B1, a laptop and 3–4 hours per week. A short entry task, no exam.</p></div></div>
+    <div class="cell"><div class="n">07</div><div><h3>Course format</h3><p>Blended: live online workshops, recorded briefs and weekly code review. Groups of 12–16; the capstone is built in pairs.</p></div></div>
+    <div class="cell"><div class="n">08</div><div><h3>Skills gained</h3><p>Prompt engineering, AI code review, testing generated code, secure AI use, debugging with traces, and a portfolio-ready capstone.</p></div></div>
+    <div class="cell"><div class="n">09</div><div><h3>Tuition</h3><p>$290 for the full course; early bird $240 until 3 November. Includes materials, weekly code review, capstone review and the certificate.</p></div></div>
+    <div class="cell"><div class="n">10</div><div><h3>Endorsement</h3><p>A certificate co-signed by the IT faculty partner, with a verification link and a LinkedIn micro-credential listing the skills.</p></div></div>
+  </div>
+
+  <div class="mid">
+    <div class="box">
+      <h2>Curriculum</h2>
+      <ul class="mods">
+        <li><span class="mn">01</span><div><b>How LLMs actually work</b><br><span>tokens, context, temperature, failure modes</span></div></li>
+        <li><span class="mn">02</span><div><b>Prompt engineering for code</b><br><span>specs, constraints, examples, acceptance criteria</span></div></li>
+        <li><span class="mn">03</span><div><b>The agentic workflow</b><br><span>OpenCode sessions, tools, plan vs build, Playwright</span></div></li>
+        <li><span class="mn">04</span><div><b>Reviewing AI code</b><br><span>correctness, security, licenses, supply chain</span></div></li>
+        <li><span class="mn">05</span><div><b>Debugging &amp; docs</b><br><span>hypotheses, tests as guardrails, ADRs</span></div></li>
+        <li><span class="mn">06</span><div><b>Capstone: ship it</b><br><span>one vertical slice, review, demo day</span></div></li>
+      </ul>
+    </div>
+    <div class="box">
+      <h2>Price</h2>
+      <div class="price">$290</div>
+      <div class="small">early bird $240 · until 3 nov</div>
+      <ul class="facts" style="margin-top:5mm">
+        <li><span class="m">[+]</span><span>6 weeks · 12 live sessions · 36 hours</span></li>
+        <li><span class="m">[+]</span><span>weekly code review by mentors</span></li>
+        <li><span class="m">[+]</span><span>capstone + portfolio review</span></li>
+        <li><span class="m">[+]</span><span>certificate and LinkedIn badge</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="band">
+    <img class="band-logo" src="../site/assets/brand/opencode-wordmark-dark.png" alt="OpenCode">
+    <p>The course is built on OpenCode — the open-source terminal agent. Students plan, build, test and review in a real agentic workflow, not a toy sandbox. Every module ends with a lab in the terminal and a human review.</p>
+  </div>
+
+  <div class="bottom">
+    <div>
+      <div class="team"><b>Denis</b> — analyst &amp; coordinator · <b>Danik</b> — curriculum developer<br><b>Mukhammed</b> — business &amp; value lead · <b>Arseniy</b> — designer &amp; QA</div>
+      <div class="foot"><span>Module III. Career Path · team project</span><span>vibe-coding.dev</span></div>
+    </div>
+    <div class="qr"><img src="../site/assets/brand/qr.png" alt="QR to the live course"></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vibe Coding — course</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23201d1d' stroke-width='2.5'/%3E%3Cpath d='M9 20l5-8 4 6 2-3 3 5' fill='none' stroke='%23201d1d' stroke-width='2.5'/%3E%3C/svg%3E">
+<style>
+  @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-var.woff2") format("woff2");font-weight:400 700;font-display:swap}
+  @font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+  :root{
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --serif:"Instrument Serif",Georgia,serif;
+    --bg:#fdfcfc;--soft:#f8f7f7;--card:#f1eeee;
+    --ink:#201d1d;--body:#424245;--mute:#646262;--faint:#9a9898;
+    --line:rgba(15,0,0,.12);--line2:#646262;
+    --dark:#201d1d;--on-dark:#fdfcfc;--on-dark-mute:#9a9898;
+    --ok:#1a7f37;--accent:#007aff;--r:4px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--mono);-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .top{border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:10}
+  .top .in{max-width:1180px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;gap:14px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+  .logo .mark{width:10px;height:10px;border:1px solid var(--ink);border-radius:2px;position:relative}
+  .logo .mark:before{content:"";position:absolute;left:2px;top:2px;width:4px;height:4px;background:var(--ink)}
+  .ocw{height:13px;width:auto;display:block}
+  .prog{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--mute)}
+  .bar{width:120px;height:4px;background:var(--card);border-radius:2px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .4s ease}
+  .top .btn{height:30px;padding:0 12px;font-size:11px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:34px;padding:0 16px;border-radius:var(--r);border:1px solid transparent;font:500 12px/1 var(--mono);cursor:pointer;background:none;color:var(--ink);transition:background .18s,border-color .18s}
+  .btn-p{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .btn-p:hover{text-decoration:none;border-color:var(--line2)}
+  .btn-g{border-color:var(--line2)}
+  .btn-g:hover{background:var(--soft);text-decoration:none}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .shell{max-width:1180px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:270px 1fr;gap:0;min-height:calc(100vh - 56px)}
+  .side{border-right:1px solid var(--line);padding:22px 20px 40px 0;font-size:12px;position:sticky;top:56px;height:calc(100vh - 56px);overflow:auto}
+  .side-course{font-size:11px;color:var(--faint);margin-bottom:14px}
+  .mod-t{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:18px 0 6px}
+  .mod-t:first-of-type{margin-top:0}
+  .l{display:flex;gap:8px;align-items:baseline;padding:5px 8px;margin:0 -8px;border-radius:3px;color:var(--body);line-height:1.45}
+  .l:hover{background:var(--soft);text-decoration:none}
+  .l.on{background:var(--card);color:var(--ink)}
+  .l .n{font-size:10px;color:var(--faint);min-width:24px}
+  .l .done{color:var(--ok)}
+  .l .cur{color:var(--faint)}
+  .lesson{padding:34px 0 80px 44px;max-width:760px}
+  .crumb{font-size:11px;color:var(--faint);margin-bottom:12px}
+  h1{font-family:var(--serif);font-size:44px;line-height:1.06;letter-spacing:-.015em;font-weight:400;margin:0 0 10px}
+  .meta{font-size:11px;color:var(--mute);margin-bottom:26px}
+  .prose p{color:var(--body);line-height:1.75;margin:0 0 16px;max-width:70ch}
+  .prose h2{font-family:var(--serif);font-size:26px;font-weight:400;margin:30px 0 10px;letter-spacing:-.01em}
+  .prose ul{margin:0 0 16px;padding-left:20px;color:var(--body);line-height:1.75}
+  .prose li{margin:4px 0}
+  .prose code{background:var(--card);padding:1px 5px;border-radius:3px;font-size:12.5px}
+  .prose pre{background:var(--dark);color:var(--on-dark);padding:14px 16px;border-radius:4px;font-size:12px;line-height:1.7;overflow:auto;margin:0 0 18px}
+  .prose pre .c{color:var(--on-dark-mute)}
+  .prose pre .g{color:#7ee787}
+  .note{border-left:2px solid var(--ink);padding:2px 0 2px 14px;margin:0 0 18px;color:var(--body);font-size:13.5px}
+  .note b{color:var(--ink)}
+  .lab{border:1px solid var(--line);border-radius:4px;margin:26px 0;overflow:hidden}
+  .lab-h{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:11px;color:var(--mute);background:var(--soft)}
+  .lab-h .dot{width:7px;height:7px;border-radius:50%;border:1px solid var(--faint)}
+  .lab-b{padding:14px}
+  .lab-b p{margin:0 0 10px;font-size:13px;color:var(--body)}
+  .term{background:var(--dark);border-radius:3px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--on-dark);min-height:84px;white-space:pre-wrap}
+  .term .p{color:var(--on-dark-mute)}
+  .term .g{color:#7ee787}
+  .term .dim{color:var(--on-dark-mute)}
+  .lab-actions{display:flex;gap:8px;margin-top:10px}
+  .quiz{border:1px solid var(--line);border-radius:4px;padding:16px;margin:26px 0}
+  .quiz .q{font-size:13px;font-weight:600;margin:0 0 12px}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:3px;margin:0 0 6px;cursor:pointer;font-size:12.5px;line-height:1.5}
+  .opt:hover{border-color:var(--line2)}
+  .opt input{margin:2px 0 0;accent-color:#201d1d}
+  .opt.right{border-color:var(--ok);background:#eef8f0}
+  .opt.wrong{border-color:#d70015;background:#fdecec}
+  .qmsg{font-size:12px;margin-top:8px;color:var(--mute)}
+  .qmsg.ok{color:var(--ok)}
+  .qmsg.bad{color:#d70015}
+  .navbtns{display:flex;justify-content:space-between;gap:10px;margin-top:34px;padding-top:20px;border-top:1px solid var(--line)}
+  .cert-wrap{display:none;padding:40px 20px 80px}
+  .cert{max-width:760px;margin:0 auto;border:1px solid var(--line2);padding:54px 56px;text-align:center;background:#fff}
+  .cert .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+  .cert h2{font-family:var(--serif);font-size:40px;font-weight:400;margin:14px 0 4px}
+  .cert .name{font-family:var(--serif);font-size:32px;border-bottom:1px solid var(--line);display:inline-block;padding:0 20px 6px;margin:26px 0 10px;min-width:320px;outline:none}
+  .cert p{color:var(--body);font-size:12px;line-height:1.8}
+  .cert .sig{display:flex;justify-content:space-between;margin-top:46px;font-size:10px;color:var(--mute);text-align:left;gap:20px}
+  .cert .sig b{display:block;border-top:1px solid var(--line2);padding-top:6px;margin-top:26px;font-weight:400}
+  .cert-actions{max-width:760px;margin:18px auto 0;display:flex;gap:10px;justify-content:center}
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr}
+    .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px 0;max-height:260px}
+    .lesson{padding:24px 0 60px}
+    h1{font-size:34px}
+    .cert{padding:32px 22px}
+  }
+  @media print{
+    .top,.side,.navbtns,.cert-actions{display:none!important}
+    .shell{display:block}
+    .lesson{display:none}
+    .cert-wrap{display:block!important;padding:0}
+    .cert{border:0}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="in">
+    <a class="logo" href="./index.html"><span class="mark"></span>vibe-coding</a>
+    <img class="ocw" src="assets/brand/opencode-wordmark-light.png" alt="OpenCode">
+    <div class="prog"><span id="pcount">0 / 19</span><div class="bar"><i id="pbar"></i></div></div>
+    <a class="btn btn-g" href="./index.html">← site</a>
+  </div>
+</div>
+
+<div class="shell">
+  <aside class="side" id="side">
+    <div class="side-course">Vibe Coding · cohort 04 · 36 h</div>
+    <nav id="outline"></nav>
+  </aside>
+  <main class="lesson" id="lesson"></main>
+</div>
+
+<div class="cert-wrap" id="certwrap">
+  <div class="cert" id="cert">
+    <div class="k">certificate of completion</div>
+    <h2>Vibe Coding</h2>
+    <p>AI-assisted software development · 36 hours · 19 lessons · reviewed capstone</p>
+    <div class="name" id="cname" contenteditable="true" spellcheck="false">Your name</div>
+    <p>has completed the six-week program and shipped a reviewed capstone project<br>using OpenCode as the primary development environment.</p>
+    <div class="sig"><div>Issue date<b id="cdate"></b></div><div>Program lead<b>IT faculty partner</b></div><div>Verification<b>vibe-coding.dev/verify</b></div></div>
+  </div>
+  <div class="cert-actions"><button class="btn btn-p" onclick="window.print()">[print / save pdf]</button><button class="btn btn-g" onclick="resetAll()">[reset progress]</button></div>
+</div>
+
+<script>
+const COURSE = [
+  { id:'m1', title:'How LLMs actually work', lessons:[
+    { id:'m1l1', title:'Tokens, context, temperature', min:8, body:`
+      <p>Every model you will use in this course — Claude, GPT, Gemini, local models — works on the same basic loop: text goes in, tokens come out. A <b>token</b> is a chunk of text, roughly ¾ of a word. The model does not see characters or words; it sees token IDs.</p>
+      <p>Three numbers explain most of the weird behaviour you will meet:</p>
+      <ul><li><b>Context window</b> — how many tokens the model can hold at once. Everything it "knows" about your task must fit here.</li>
+      <li><b>Temperature</b> — how random the next-token choice is. Low = predictable code, high = creative but sloppy.</li>
+      <li><b>Output limit</b> — the model stops mid-file if it runs out. That is why generated files sometimes end abruptly.</li></ul>
+      <p>For code, keep temperature low, keep context small and relevant, and never assume the model remembers a file you did not give it.</p>`,
+      cmd:'opencode', out:'<span class="p">$</span> opencode\n<span class="dim">opencode v1.0 · model: claude-sonnet · cwd ~/vibe-lab</span>\n<span class="g">✔</span> session ready',
+      quiz:{q:'Why does a generated file sometimes stop mid-function?', opts:['The model got bored','It hit the output token limit','The file is too large for disk','The terminal closed'], a:1}
+    },
+    { id:'m1l2', title:'The three failure modes', min:9, body:`
+      <p>Models fail in predictable ways. Learn the patterns and you stop debugging ghosts.</p>
+      <ul><li><b>Hallucinated APIs.</b> The model invents a function that looks right. Always check that the symbol exists in the installed version.</li>
+      <li><b>Context drift.</b> After a long session the model starts answering an older version of the task. Restate the goal or start a fresh session.</li>
+      <li><b>Confident wrongness.</b> The answer is fluent, specific and false. Fluency is not evidence — run the code.</li></ul>
+      <p>The defence is the same for all three: make the model show its work, run the result, and review the diff instead of the prose.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> why does this API return 404?\n<span class="dim">● Grep</span> routes/\n<span class="dim">● Read</span> routes/users.ts\n<span class="g">✔</span> found: the route is /api/v1/users, not /api/users',
+      quiz:{q:'The model gives a fluent, specific answer. What is the correct next step?', opts:['Trust it — fluency means confidence','Run or verify it before using it','Ask it to repeat the answer','Increase the temperature'], a:1}
+    },
+    { id:'m1l3', title:'Lab: inspect a repo with OpenCode', min:12, body:`
+      <p>Start OpenCode inside a real project and ask it to explain the structure before you ask it to change anything. This is the habit that separates a demo from engineering.</p>
+      <pre><span class="c"># install (once)</span>\ncurl -fsSL https://opencode.ai/install | bash\n\n<span class="c"># inside the project</span>\nopencode\n<span class="c"># then type:</span>\n<span class="g">explain this repository: entry points, main modules, how to run it</span></pre>
+      <p>Read the answer as a map, not as truth. Open two of the files it names and check that the map matches the territory.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> explain this repository\n<span class="dim">● Glob</span> **/*.{ts,js,json}\n<span class="dim">● Read</span> package.json\n<span class="dim">● Read</span> src/index.ts\n<span class="g">✔</span> entry: src/index.ts · build: npm run dev · tests: vitest',
+      quiz:{q:'What should you do with the agent’s repo explanation?', opts:['Paste it into the report','Verify it against the actual files','Delete the repo and start over','Ask for a longer answer'], a:1}
+    }
+  ]},
+  { id:'m2', title:'Prompt engineering for code', lessons:[
+    { id:'m2l1', title:'From wish to spec', min:10, body:`
+      <p>A prompt is not a spec. "Make a nice landing page" gives the model freedom to invent everything — and you the job of fixing it. A spec names the audience, the sections, the constraints and the definition of done.</p>
+      <pre><span class="c">## Brief</span>\nLanding page for a coffee shop. Sections: hero, menu (3 items), visit.\nTone: warm, editorial. Stack: static HTML + CSS.\n\n<span class="c">## Acceptance criteria</span>\n- works at 360px and 1440px\n- no external fonts or images\n- one primary CTA above the fold\n- Lighthouse a11y ≥ 95</pre>
+      <p>This is longer than a wish, and ten times cheaper than a rewrite.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> build the landing page from BRIEF.md\n<span class="dim">● Read</span> BRIEF.md\n<span class="dim">● Write</span> site/index.html <span class="g">+128</span>\n<span class="g">✔</span> acceptance criteria: 4/4 checked',
+      quiz:{q:'What makes a prompt usable as a spec?', opts:['It is short','It names constraints and acceptance criteria','It uses polite language','It asks for the best possible result'], a:1}
+    },
+    { id:'m2l2', title:'Context: files, examples, rules', min:9, body:`
+      <p>Models are only as good as the context you give them. In OpenCode you can point at files explicitly, keep a project rules file, and attach examples of the style you want.</p>
+      <ul><li><b>@file</b> — reference the exact file instead of describing it.</li>
+      <li><b>AGENTS.md</b> — the project’s standing rules: stack, conventions, commands, forbidden patterns.</li>
+      <li><b>Examples</b> — one good component teaches more than a paragraph of adjectives.</li></ul>
+      <p>Keep context small and relevant. A model drowning in files starts averaging them.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> @src/components/Button.tsx make a danger variant\n<span class="dim">● Read</span> src/components/Button.tsx\n<span class="dim">● Edit</span> src/components/Button.tsx <span class="g">+18 −2</span>\n<span class="g">✔</span> matches existing tokens and props',
+      quiz:{q:'What is AGENTS.md for?', opts:['A changelog','Standing project rules the agent should follow','A list of API keys','The README mirror'], a:1}
+    },
+    { id:'m2l3', title:'Lab: generate a pricing card', min:14, body:`
+      <p>Write a five-line brief for a pricing card, then ask OpenCode to build it and review the result against your own criteria.</p>
+      <pre><span class="c">## Brief</span>\nPricing card: plan name, price, 4 features, CTA.\nStack: HTML + CSS. Width 320px. Dark text on cream.\n\n<span class="c">## Done when</span>\n- no layout shift on hover\n- CTA is a real button\n- contrast ≥ 4.5:1</pre>
+      <p>After generation, check the button semantics and the contrast yourself. The model will claim both are fine.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> build the pricing card from the brief\n<span class="dim">● Write</span> pricing.html\n<span class="g">✔</span> done · 1 file · 84 lines\n<span class="dim">next: review contrast and button semantics</span>',
+      quiz:{q:'What must you verify after generating UI?', opts:['Only that it looks nice','Semantics, contrast, layout behaviour','That the model is proud of it','Nothing — the model checks itself'], a:1}
+    }
+  ]},
+  { id:'m3', title:'The agentic workflow in OpenCode', lessons:[
+    { id:'m3l1', title:'Install and first session', min:8, body:`
+      <p>OpenCode is a terminal-native coding agent. You run it inside a project; it reads files, writes changes, runs commands and keeps a session you can resume.</p>
+      <pre><span class="c"># install</span>\ncurl -fsSL https://opencode.ai/install | bash\n\n<span class="c"># authenticate once</span>\nopencode auth login\n\n<span class="c"># start in a project</span>\ncd ~/vibe-lab && opencode</pre>
+      <p>Useful in-session commands: <code>/init</code> to map the repo, <code>/models</code> to switch models, <code>/undo</code> and <code>/redo</code> for changes, <code>/share</code> for a link.</p>`,
+      cmd:'opencode', out:'<span class="p">$</span> opencode auth login\n<span class="g">✔</span> provider connected\n<span class="p">$</span> cd ~/vibe-lab && opencode\n<span class="dim">opencode v1.0 · cwd ~/vibe-lab</span>\n<span class="g">✔</span> ready — type /init to map the repo',
+      quiz:{q:'Where should you start OpenCode?', opts:['In your home directory','Inside the project you are working on','In the browser','In a separate VM only'], a:1}
+    },
+    { id:'m3l2', title:'Tools, modes and skills', min:10, body:`
+      <p>The agent is a loop: think → call a tool → read the result → continue. The core tools are file read, file write/edit, bash, grep/glob and web fetch. Everything else is built on top.</p>
+      <p><b>Plan vs build.</b> Use the plan mode to explore and propose; switch to build only when the approach is agreed. It is cheaper to change a plan than a diff.</p>
+      <p><b>Skills and plugins</b> extend the agent with repeatable procedures and integrations. A skill is a packaged instruction set; a plugin adds tools. Install only what you can read.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> plan: add dark mode to the app\n<span class="dim">[plan] ● Read</span> src/theme.ts\n<span class="dim">[plan] ● Grep</span> colors\\/\n<span class="g">✔</span> plan: 3 files, 1 token source, no layout changes\n<span class="dim">switch to build to apply</span>',
+      quiz:{q:'Why use plan mode before build mode?', opts:['It is faster to type','It is cheaper to change a plan than a diff','It bypasses review','It writes better CSS'], a:1}
+    },
+    { id:'m3l3', title:'Lab: build a page end-to-end', min:16, body:`
+      <p>This is the loop you will repeat for the rest of the course: brief → plan → build → run → review. Build a small landing page and keep the terminal open.</p>
+      <pre><span class="c"># in the project</span>\nopencode\n<span class="c"># then:</span>\n<span class="g">plan a landing page for a coffee shop, then build it</span>\n<span class="c"># after it writes:</span>\nnpm run dev</pre>
+      <p>Do not accept the first draft. Ask for the mobile view, then check it at 360px yourself.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> plan, then build the coffee landing page\n<span class="dim">[plan]</span> 1 file · 3 sections · static stack\n<span class="dim">[build] ● Write</span> index.html <span class="g">+128</span>\n<span class="g">✔</span> npm run dev → localhost:3000\n<span class="dim">review: mobile 360px, contrast, CTA</span>',
+      quiz:{q:'What is the last step of the build loop?', opts:['Close the terminal','Run and review the result','Ask for more features','Commit without looking'], a:1}
+    },
+    { id:'m3l4', title:'Browser agents with Playwright', min:11, body:`
+      <p>A model answers. An agent acts. The difference is <b>tools</b> — and one of the most useful tools is a browser. With Playwright the agent can open a page, click, read the DOM and verify that the result is real instead of imagined.</p>
+      <p>In OpenCode a browser session looks like any other tool loop: navigate, snapshot, click, extract. The agent does not “look” at pixels like a human; it reads the accessibility tree and the DOM, which is faster and far more precise.</p>
+      <pre><span class="c"># the agent has a browser tool</span>
+<span class="g">● browser_navigate</span> docs.opencode.ai/install
+<span class="g">● browser_snapshot</span> 12 nodes
+<span class="g">● browser_click</span> "copy install command"
+<span class="g">● browser_extract</span> install steps</pre>
+      <p><b>Safety first.</b> Give the agent a browser only where it is allowed to act: read-only sessions for research, domain allowlists, and a human confirmation before anything that writes, pays or deletes. The demo on the landing page is exactly this loop — with the human still holding the keys.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> open the install docs and verify the command\n<span class="d">● browser_navigate</span> docs.opencode.ai/install\n<span class="d">● browser_snapshot</span> 12 nodes\n<span class="d">● browser_click</span> "copy install command"\n<span class="d">● browser_extract</span> install steps\n<span class="g">✔ done</span> 4 steps · 2.1s',
+      quiz:{q:'What turns a model into an agent?', opts:['A bigger context window','Tools it can call and act on','A nicer interface','More training data'], a:1}
+    }
+  ]},
+  { id:'m4', title:'Reviewing AI code', lessons:[
+    { id:'m4l1', title:'The review checklist', min:10, body:`
+      <p>Generated code is a draft, not a decision. Review it in a fixed order so you do not get distracted by style.</p>
+      <ul><li><b>Correctness</b> — does it do the task, including empty and error states?</li>
+      <li><b>Security</b> — secrets, injection, unsafe HTML, permissions.</li>
+      <li><b>Data</b> — migrations, nulls, timezones, money rounding.</li>
+      <li><b>Performance</b> — N+1 queries, unbounded loops, huge bundles.</li>
+      <li><b>Accessibility</b> — semantics, focus, contrast, keyboard.</li>
+      <li><b>Licensing</b> — copied snippets, dependencies, attribution.</li></ul>
+      <p>If a line has no obvious owner, it is yours now. That is what "owning the code" means.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> review the diff against the checklist\n<span class="dim">● Bash</span> git diff\n<span class="g">✔</span> 1 blocker: API key in client bundle\n<span class="g">✔</span> 2 warnings: missing alt, unbounded loop',
+      quiz:{q:'Which review item comes first?', opts:['Formatting','Correctness and edge cases','Variable naming','Comment style'], a:1}
+    },
+    { id:'m4l2', title:'Secrets, licenses, supply chain', min:9, body:`
+      <p>Three failure classes deserve their own pass because the model will not flag them for you.</p>
+      <ul><li><b>Secrets.</b> Keys pasted into prompts end up in code and logs. Use env vars, add <code>.env</code> to <code>.gitignore</code>, run a secret scanner in CI.</li>
+      <li><b>Licenses.</b> The model can reproduce GPL or proprietary snippets. Check the license of every copied block and new dependency.</li>
+      <li><b>Supply chain.</b> Typosquatted packages, unpinned versions, postinstall scripts. Pin, lock, review.</li></ul>
+      <p>Assume every generated file may contain a secret until a scanner says otherwise.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> scan the repo for secrets and risky deps\n<span class="dim">● Bash</span> gitleaks detect --no-banner\n<span class="g">✔</span> 0 leaks\n<span class="dim">● Bash</span> npm audit --omit=dev\n<span class="g">✔</span> 0 high · 2 moderate (pinned)',
+      quiz:{q:'Where do secrets most often leak from AI workflows?', opts:['The model’s training data','Keys pasted into prompts and generated code','The CSS file','The README'], a:1}
+    },
+    { id:'m4l3', title:'Lab: find the bugs', min:15, body:`
+      <p>Review this generated handler. It looks fine. Find the three problems before reading the answer.</p>
+      <pre>app.get('/user', async (req, res) =&gt; {\n  const user = await db.query(\n    \`SELECT * FROM users WHERE id = \${req.query.id}\`\n  );\n  res.json({ ...user, apiKey: process.env.API_KEY });\n});</pre>
+      <p><b>Spoiler:</b> SQL injection, missing auth/validation, and a secret leaked to the client. One more: no 404 path.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> review this handler\n<span class="g">✔</span> blocker: SQL injection via req.query.id\n<span class="g">✔</span> blocker: API_KEY sent to the client\n<span class="g">✔</span> missing: auth check, 404, input validation',
+      quiz:{q:'Which is the most serious bug in the handler?', opts:['No trailing comma','SQL injection and leaked API key','The route name','Missing semicolon'], a:1}
+    }
+  ]},
+  { id:'m5', title:'Debugging and docs with AI', lessons:[
+    { id:'m5l1', title:'Debug with hypotheses, not guesses', min:10, body:`
+      <p>Do not ask "fix this". Give the agent the evidence and ask for hypotheses ranked by probability, each with a test.</p>
+      <pre><span class="c">## Symptom</span>\nCheckout returns 500 for 1 in 20 orders.\n<span class="c">## Evidence</span>\n[stack trace]\n[request id]\n<span class="c">## Ask</span>\n3 hypotheses, the cheapest test for each, no code yet.</pre>
+      <p>This keeps the agent in diagnosis mode and stops it from rewriting half the app to hide the bug.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> 3 hypotheses for the checkout 500, cheapest test first\n<span class="dim">1.</span> race on inventory row (test: two concurrent orders)\n<span class="dim">2.</span> null shipping address (test: fixture without address)\n<span class="dim">3.</span> currency rounding (test: 0.1 + 0.2 case)',
+      quiz:{q:'What should you ask for instead of "fix this"?', opts:['A full rewrite','Ranked hypotheses with cheap tests','More comments','A different model'], a:1}
+    },
+    { id:'m5l2', title:'Tests as guardrails', min:9, body:`
+      <p>A generated fix without a test is a rumour. Ask for the failing test first, then the fix, then run the suite.</p>
+      <ul><li>One test per bug, named after the behaviour.</li>
+      <li>Test the edge case that broke, not the happy path again.</li>
+      <li>Keep tests deterministic: no sleeps, no real network.</li></ul>
+      <p>Tests are also the cheapest way to give the agent context next time.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> write a failing test for the 500, then fix it\n<span class="dim">● Write</span> tests/checkout.test.ts\n<span class="dim">● Bash</span> npm test → <span class="g">1 failing</span>\n<span class="dim">● Edit</span> src/checkout.ts <span class="g">+6 −2</span>\n<span class="g">✔</span> npm test → 24 passing',
+      quiz:{q:'What comes first when fixing a bug with AI?', opts:['The fix','A failing test that reproduces it','A refactor','A new dependency'], a:1}
+    },
+    { id:'m5l3', title:'Lab: fix and document', min:14, body:`
+      <p>Take a failing test, fix it, and write a one-page ADR (architecture decision record) explaining the trade-off. Documentation is part of shipping.</p>
+      <pre><span class="c">## ADR-004: checkout retries</span>\nContext: 1 in 20 orders failed on inventory race.\nDecision: retry once with a row lock, then fail loudly.\nConsequences: +12ms p95, no silent double-charge.</pre>
+      <p>Ask the agent to draft it from the diff, then cut every sentence that is not a decision.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> draft ADR-004 from this diff\n<span class="dim">● Bash</span> git diff main\n<span class="g">✔</span> docs/adr/004-checkout-retries.md\n<span class="dim">review: decision, consequences, alternatives</span>',
+      quiz:{q:'What belongs in an ADR?', opts:['A full changelog','The decision, context and consequences','Marketing copy','All code comments'], a:1}
+    }
+  ]},
+  { id:'m6', title:'Capstone: ship it', lessons:[
+    { id:'m6l1', title:'Scope one vertical slice', min:9, body:`
+      <p>A capstone is not a startup. Pick one user, one job, one flow that works end-to-end. Cut everything that does not make the demo true.</p>
+      <ul><li><b>User</b> — one sentence, one person.</li>
+      <li><b>Job</b> — what they need to finish.</li>
+      <li><b>Done</b> — three observable outcomes, no adjectives.</li></ul>
+      <p>Write the demo script before the code. If the script needs a feature you cut, the scope is wrong.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> help me cut this scope to one vertical slice\n<span class="g">✔</span> keep: create → review → publish\n<span class="g">✔</span> cut: teams, billing, analytics, dark mode\n<span class="dim">demo script: 3 minutes, 1 flow</span>',
+      quiz:{q:'What is a vertical slice?', opts:['A layer of the backend','One flow working end-to-end for one user','A design system','A database table'], a:1}
+    },
+    { id:'m6l2', title:'Build, review, ship', min:12, body:`
+      <p>Run the full loop under a clock: plan, build, test, review, deploy. The discipline is refusing to skip review when time is short — that is exactly when it matters.</p>
+      <pre><span class="c"># ship checklist</span>\n[ ] tests green        [ ] no secrets\n[ ] a11y pass          [ ] rollback plan\n[ ] README + ADR       [ ] demo rehearsed</pre>
+      <p>Ask the agent for the diff summary, then read the diff yourself. The agent summarizes; you decide.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> run the ship checklist on this branch\n<span class="dim">● Bash</span> npm test → <span class="g">31 passing</span>\n<span class="dim">● Bash</span> gitleaks → <span class="g">0 leaks</span>\n<span class="dim">● Bash</span> npx lighthouse --quiet → <span class="g">a11y 98</span>\n<span class="g">✔</span> ready to ship',
+      quiz:{q:'When is review most important?', opts:['When there is plenty of time','When the deadline is close','After deployment','Only for large teams'], a:1}
+    },
+    { id:'m6l3', title:'Demo day and what comes next', min:10, body:`
+      <p>Three minutes: the user, the problem, the flow, the review, the result. No feature tour, no apology for what is missing. Show the working product and one number.</p>
+      <p>After the course, keep the loop: a repo with a README, an ADR, tests and a short demo video is worth more than a certificate alone. The certificate opens the conversation; the work closes it.</p>`,
+      cmd:'opencode', out:'<span class="p">›</span> help me rehearse the 3-minute demo\n<span class="dim">0:00</span> user + problem\n<span class="dim">0:40</span> live flow\n<span class="dim">2:10</span> review + result\n<span class="g">✔</span> 2:58 · under the limit',
+      quiz:{q:'What should a 3-minute demo contain?', opts:['Every feature','User, problem, flow, review, result','A team introduction','A roadmap'], a:1}
+    }
+  ]}
+];
+
+const ALL = COURSE.flatMap(m => m.lessons.map(l => ({ ...l, m })));
+const TOTAL = ALL.length;
+const store = {
+  get done() { try { return JSON.parse(localStorage.getItem('vibe.done') || '[]'); } catch (e) { return []; } },
+  set done(v) { localStorage.setItem('vibe.done', JSON.stringify(v)); },
+  get name() { return localStorage.getItem('vibe.name') || ''; },
+  set name(v) { localStorage.setItem('vibe.name', v); }
+};
+const isDone = (id) => store.done.includes(id);
+const $ = (s) => document.querySelector(s);
+
+function outline() {
+  const nav = $('#outline');
+  nav.innerHTML = COURSE.map((m, mi) => `
+    <div class="mod-t">${String(mi + 1).padStart(2, '0')} · ${m.title}</div>
+    ${m.lessons.map((l, li) => {
+      const d = isDone(l.id);
+      return `<a class="l ${location.hash === '#' + l.id ? 'on' : ''}" href="#${l.id}" data-id="${l.id}">
+        <span class="n">${mi + 1}.${li + 1}</span>
+        <span class="${d ? 'done' : 'cur'}">${d ? '✓' : '·'}</span>
+        <span>${l.title}</span></a>`;
+    }).join('')}
+  `).join('');
+  const n = store.done.length;
+  $('#pcount').textContent = n + ' / ' + TOTAL;
+  $('#pbar').style.width = (n / TOTAL * 100) + '%';
+}
+
+function lessonHTML(l, m) {
+  const idx = ALL.findIndex(x => x.id === l.id);
+  const prev = ALL[idx - 1], next = ALL[idx + 1];
+  const done = isDone(l.id);
+  return `
+  <div class="crumb">Module ${COURSE.indexOf(m) + 1} · Lesson ${m.lessons.indexOf(l) + 1} · ${l.min} min</div>
+  <h1>${l.title}</h1>
+  <div class="meta">${done ? '✓ completed' : 'in progress'} · vibe-coding · opencode</div>
+  <div class="prose">${l.body}</div>
+  <div class="lab">
+    <div class="lab-h"><span class="dot"></span> opencode · lab</div>
+    <div class="lab-b">
+      <p>Run the session to see the expected flow. (Simulated locally — nothing is executed.)</p>
+      <div class="term" id="term"><span class="dim">press run…</span></div>
+      <div class="lab-actions"><button class="btn btn-p" id="run">[run]</button><button class="btn btn-g" id="clear">[clear]</button></div>
+    </div>
+  </div>
+  <div class="quiz" id="quiz">
+    <div class="q">Checkpoint · ${l.quiz.q}</div>
+    ${l.quiz.opts.map((o, i) => `<label class="opt" data-i="${i}"><input type="radio" name="q" value="${i}"><span>${o}</span></label>`).join('')}
+    <div class="qmsg" id="qmsg"></div>
+    <div style="margin-top:10px"><button class="btn btn-g" id="check">[check answer]</button></div>
+  </div>
+  <div class="navbtns">
+    <div>${prev ? `<a class="btn btn-g" href="#${prev.id}">← ${prev.title}</a>` : ''}</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn ${done ? 'btn-g' : 'btn-p'}" id="complete" ${done ? 'disabled' : ''}>${done ? '✓ completed' : '[mark complete]'}</button>
+      ${next ? `<a class="btn btn-g" href="#${next.id}">next →</a>` : `<a class="btn btn-g" href="#cert">certificate →</a>`}
+    </div>
+  </div>`;
+}
+
+function render() {
+  const id = location.hash.replace('#', '') || ALL[0].id;
+  if (id === 'cert') { showCert(); return; }
+  const l = ALL.find(x => x.id === id) || ALL[0];
+  $('#certwrap').style.display = 'none';
+  $('.shell').style.display = '';
+  $('#lesson').innerHTML = lessonHTML(l, l.m);
+  $('#lesson').scrollIntoView({ block: 'start' });
+  outline();
+
+  let answered = false;
+  $('#check').onclick = () => {
+    const sel = document.querySelector('input[name="q"]:checked');
+    if (!sel) return;
+    const i = Number(sel.value), msg = $('#qmsg');
+    answered = i === l.quiz.a;
+    document.querySelectorAll('.opt').forEach(el => {
+      const k = Number(el.dataset.i);
+      el.classList.toggle('right', k === l.quiz.a);
+      el.classList.toggle('wrong', k === i && i !== l.quiz.a);
+    });
+    msg.textContent = answered ? 'correct — you can mark the lesson complete.' : 'not quite. the right answer is highlighted.';
+    msg.className = 'qmsg ' + (answered ? 'ok' : 'bad');
+  };
+
+  $('#run').onclick = async () => {
+    const t = $('#term'); t.innerHTML = '';
+    const lines = l.out.split('\n');
+    for (const line of lines) {
+      t.innerHTML += line + '\n';
+      await new Promise(r => setTimeout(r, 260));
+    }
+  };
+  $('#clear').onclick = () => { $('#term').innerHTML = '<span class="dim">press run…</span>'; };
+
+  $('#complete').onclick = () => {
+    if (!answered) {
+      const msg = $('#qmsg');
+      msg.textContent = 'answer the checkpoint first — it is the proof you read the lesson.';
+      msg.className = 'qmsg bad';
+      return;
+    }
+    const d = store.done;
+    if (!d.includes(l.id)) d.push(l.id);
+    store.done = d;
+    if (store.done.length >= TOTAL) { location.hash = 'cert'; }
+    else render();
+  };
+
+  if (isDone(l.id)) {
+    // allow navigation but keep the answer check available
+  }
+}
+
+function showCert() {
+  if (store.done.length < TOTAL) {
+    location.hash = ALL[0].id;
+    return;
+  }
+  $('.shell').style.display = 'none';
+  const w = $('#certwrap'); w.style.display = 'block';
+  $('#cname').textContent = store.name || 'Your name';
+  $('#cdate').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  $('#cname').addEventListener('input', () => { store.name = $('#cname').textContent.trim(); });
+  window.scrollTo(0, 0);
+}
+
+function resetAll() {
+  localStorage.removeItem('vibe.done');
+  location.hash = ALL[0].id;
+  location.reload();
+}
+
+window.addEventListener('hashchange', render);
+document.addEventListener('DOMContentLoaded', () => { outline(); render(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vibe Coding — deck</title>
+<style>
+  @font-face{font-family:"JetBrains Mono";src:url("../site/assets/fonts/JetBrainsMono-var.woff2") format("woff2");font-weight:400 700;font-display:swap}
+  @font-face{font-family:"Instrument Serif";src:url("../site/assets/fonts/InstrumentSerif-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Instrument Serif";src:url("../site/assets/fonts/InstrumentSerif-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+  :root{--mono:"JetBrains Mono",monospace;--serif:"Instrument Serif",Georgia,serif;--ink:#201d1d;--body:#424245;--mute:#646262;--faint:#9a9898;--line:rgba(15,0,0,.14);--bg:#fdfcfc;--dark:#201d1d;--on:#fdfcfc}
+  *{box-sizing:border-box}
+  @page{size:1280px 720px;margin:0}
+  html,body{margin:0;background:#111;color:var(--ink);font-family:var(--mono)}
+  .deck{width:1280px;height:720px;margin:0 auto;position:relative;overflow:hidden;background:var(--bg)}
+  .slide{position:absolute;inset:0;padding:64px 76px;display:none;flex-direction:column;background:var(--bg)}
+  .slide.on{display:flex}
+  .slide.dark{background:var(--dark);color:var(--on)}
+  .k{font-size:13px;color:var(--faint);letter-spacing:.06em}
+  .dark .k{color:var(--on);opacity:.5}
+  h1{font-family:var(--serif);font-weight:400;font-size:86px;line-height:.98;letter-spacing:-.02em;margin:18px 0 14px}
+  h1 em{font-style:italic}
+  h2{font-family:var(--serif);font-weight:400;font-size:62px;line-height:1.02;letter-spacing:-.015em;margin:10px 0 20px}
+  .sub{font-size:19px;line-height:1.6;color:var(--body);max-width:820px}
+  .dark .sub{color:var(--on);opacity:.8}
+  .row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line);margin-top:34px}
+  .dark .row{border-color:rgba(253,252,252,.18)}
+  .cell{padding:22px 22px 0 0;border-right:1px solid var(--line)}
+  .dark .cell{border-color:rgba(253,252,252,.18)}
+  .cell:last-child{border-right:0}
+  .cell .n{font-size:12px;color:var(--faint);margin-bottom:10px}
+  .cell h3{font-size:17px;margin:0 0 8px}
+  .cell p{font-size:14px;line-height:1.6;color:var(--body);margin:0}
+  .dark .cell p{color:var(--on);opacity:.72}
+  ul.big{list-style:none;margin:26px 0 0;padding:0}
+  ul.big li{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:18px;line-height:1.45}
+  ul.big .m{color:var(--faint);font-size:14px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:60px;flex:1}
+  .price{font-family:var(--serif);font-size:120px;line-height:1;margin:10px 0 4px}
+  .mono-sm{font-size:14px;color:var(--mute);line-height:1.7}
+  .mark-img{width:250px;height:auto;display:block}
+  .footer{position:absolute;left:76px;right:76px;bottom:34px;display:flex;justify-content:space-between;font-size:12px;color:var(--faint)}
+  .dark .footer{color:var(--on);opacity:.4}
+  .num{position:absolute;right:76px;top:58px;font-size:12px;color:var(--faint)}
+  .dark .num{color:var(--on);opacity:.4}
+  .cta{display:inline-block;margin-top:26px;border:1px solid var(--line);padding:12px 18px;font-size:14px}
+  .dark .cta{border-color:rgba(253,252,252,.3)}
+  .hint{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#666;z-index:5}
+  @media print{
+    html,body{background:#fff}
+    .deck{margin:0;width:1280px;height:auto;overflow:visible}
+    .slide{display:flex!important;position:relative;width:1280px;height:720px;page-break-after:always;break-after:page}
+    .hint{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <section class="slide dark on">
+    <div class="k">module III · career path · final project</div>
+    <img class="mark-img" src="../site/assets/brand/opencode-wordmark-dark.png" alt="OpenCode" style="margin-top:26px">
+    <h1 style="margin-top:26px">Ship apps<br>by <em>vibes.</em></h1>
+    <p class="sub">A six-week course that turns AI agents into a co-founder — from the first prompt to a reviewed, shipped feature. Practised in OpenCode.</p>
+    <div class="footer"><span>Denis · Danik · Mukhammed · Arseniy</span><span>cohort 04 · 2026</span></div>
+    <div class="num">01 / 10</div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] the gap</div>
+    <h2>AI writes the code.<br>Nobody teaches the review.</h2>
+    <div class="row">
+      <div class="cell"><div class="n">01</div><h3>Speed without safety</h3><p>Vibe-coded prototypes leak keys, skip edge cases and break in production.</p></div>
+      <div class="cell"><div class="n">02</div><h3>No workflow</h3><p>Tutorials show prompts. Almost none show the loop: spec → generate → review → ship.</p></div>
+      <div class="cell"><div class="n">03</div><h3>Juniors left alone</h3><p>They ship faster than before and own code they cannot explain in a review.</p></div>
+    </div>
+    <div class="footer"><span>vibe-coding</span><span>02 / 10</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] audience &amp; needs · denis</div>
+    <h2>Who it is for</h2>
+    <ul class="big">
+      <li><span class="m">01</span><span><b>2nd–4th year IT students</b> who already write code and use AI tools chaotically.</span></li>
+      <li><span class="m">02</span><span><b>Juniors with 0–2 years</b> who need to review AI output, not just generate it.</span></li>
+      <li><span class="m">03</span><span><b>Needs:</b> prompt skill, safe workflow, speed without broken code, portfolio proof.</span></li>
+    </ul>
+    <div class="footer"><span>vibe-coding</span><span>03 / 10</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] training goals · denis</div>
+    <h2>Five measurable outcomes</h2>
+    <ul class="big">
+      <li><span class="m">01</span><span>Write a spec and a prompt that produces usable code on the first pass.</span></li>
+      <li><span class="m">02</span><span>Run an agentic loop in OpenCode: plan, build, test, review.</span></li>
+      <li><span class="m">03</span><span>Review AI code for bugs, secrets, licenses and accessibility.</span></li>
+      <li><span class="m">04</span><span>Debug with hypotheses and tests instead of regenerating blindly.</span></li>
+      <li><span class="m">05</span><span>Ship one vertical slice and defend it in a three-minute demo.</span></li>
+    </ul>
+    <div class="footer"><span>vibe-coding</span><span>04 / 10</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] curriculum · danik</div>
+    <h2>Six modules · 36 hours</h2>
+    <div class="two">
+      <ul class="big" style="margin-top:0">
+        <li><span class="m">01</span><span><b>How LLMs work</b> — tokens, context, failure modes.</span></li>
+        <li><span class="m">02</span><span><b>Prompt engineering</b> — specs and acceptance criteria.</span></li>
+        <li><span class="m">03</span><span><b>Agentic workflow</b> — OpenCode, tools, Playwright.</span></li>
+      </ul>
+      <ul class="big" style="margin-top:0">
+        <li><span class="m">04</span><span><b>Reviewing AI code</b> — security, licenses, data.</span></li>
+        <li><span class="m">05</span><span><b>Debugging &amp; docs</b> — traces, tests, ADRs.</span></li>
+        <li><span class="m">06</span><span><b>Capstone</b> — one slice, shipped and reviewed.</span></li>
+      </ul>
+    </div>
+    <div class="footer"><span>vibe-coding</span><span>05 / 10</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] format &amp; schedule · danik</div>
+    <h2>How the six weeks run</h2>
+    <div class="row">
+      <div class="cell"><div class="n">01</div><h3>2 × 90 min / week</h3><p>Live online workshops in the evening. Every session is recorded.</p></div>
+      <div class="cell"><div class="n">02</div><h3>Blended</h3><p>Live build-alongs, async briefs, and a weekly code review on your PR.</p></div>
+      <div class="cell"><div class="n">03</div><h3>12–16 seats</h3><p>Small cohort, pairs for the capstone, direct mentor feedback.</p></div>
+    </div>
+    <div class="footer"><span>vibe-coding</span><span>06 / 10</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] skills · mukhammed</div>
+    <h2>What you leave with</h2>
+    <ul class="big">
+      <li><span class="m">01</span><span>Prompt engineering for production code, not demos.</span></li>
+      <li><span class="m">02</span><span>A repeatable review checklist for AI-generated diffs.</span></li>
+      <li><span class="m">03</span><span>Testing and debugging workflows that catch what the model hides.</span></li>
+      <li><span class="m">04</span><span>Secure AI use: secrets, licenses, supply chain.</span></li>
+      <li><span class="m">05</span><span>A capstone repo, a demo video and a portfolio story.</span></li>
+    </ul>
+    <div class="footer"><span>vibe-coding</span><span>07 / 10</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] tuition · mukhammed</div>
+    <div class="two">
+      <div>
+        <h2 style="margin-bottom:0">One price,<br>everything included.</h2>
+        <div class="price">$290</div>
+        <div class="mono-sm">early bird $240 · until 3 november</div>
+      </div>
+      <ul class="big" style="margin-top:0">
+        <li><span class="m">[+]</span><span>6 weeks · 12 live sessions · 36 hours</span></li>
+        <li><span class="m">[+]</span><span>Weekly code review by mentors</span></li>
+        <li><span class="m">[+]</span><span>Capstone and portfolio review</span></li>
+        <li><span class="m">[+]</span><span>Certificate and LinkedIn badge</span></li>
+      </ul>
+    </div>
+    <div class="footer"><span>vibe-coding</span><span>08 / 10</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="k">[+] endorsement · mukhammed</div>
+    <h2>Why the certificate means something</h2>
+    <div class="row">
+      <div class="cell"><div class="n">01</div><h3>Reviewed capstone</h3><p>Checked by a mentor against a public rubric — not just watched.</p></div>
+      <div class="cell"><div class="n">02</div><h3>Faculty partner</h3><p>Co-signed by the IT faculty partner, with a verification link.</p></div>
+      <div class="cell"><div class="n">03</div><h3>LinkedIn badge</h3><p>A micro-credential listing the skills explicitly.</p></div>
+    </div>
+    <div class="footer"><span>vibe-coding</span><span>09 / 10</span></div>
+  </section>
+
+  <section class="slide dark">
+    <div class="k">[+] demo · arseniy</div>
+    <h1 style="font-size:72px;margin-top:16px">Try it<br>before you enroll.</h1>
+    <p class="sub">The live demo runs a real OpenCode-style session in the browser: type a brief, watch the agent plan, write and ship, then review the result. The full course adds 18 lessons, labs and a reviewed capstone.</p>
+    <div class="cta">vibe-coding.dev → start the course</div>
+    <div class="footer"><span>Denis · Danik · Mukhammed · Arseniy</span><span>10 / 10</span></div>
+  </section>
+
+</div>
+<div class="hint">← → to navigate · p to print · click to advance</div>
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = 0;
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('on', k === i));
+    location.hash = 's' + (i + 1);
+  }
+  addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); show(i + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(i - 1); }
+    if (e.key === 'p') { e.preventDefault(); print(); }
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('a')) show(i + 1); });
+  const h = location.hash.match(/^#s(\d+)/);
+  show(h ? Number(h[1]) - 1 : 0);
+</script>
+</body>
+</html>
