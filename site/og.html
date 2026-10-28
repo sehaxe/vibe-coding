@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Vibe Coding — social card</title>
+<style>
+  @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-var.woff2") format("woff2");font-weight:400 700;font-display:block}
+  @font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-normal.woff2") format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:block}
+  *{box-sizing:border-box}
+  html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#fdfcfc;color:#201d1d;font-family:"JetBrains Mono",monospace;-webkit-font-smoothing:antialiased}
+  .bg{position:absolute;inset:0;background:
+    radial-gradient(620px 420px at 10% 12%, rgba(255,90,54,.10), rgba(255,90,54,0) 62%),
+    radial-gradient(760px 520px at 90% 22%, rgba(0,122,255,.11), rgba(0,122,255,0) 64%),
+    linear-gradient(160deg,#fdfcfc 0%,#f7f4ef 100%)}
+  .grid{position:absolute;inset:0;background-image:
+    linear-gradient(rgba(32,29,29,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32,29,29,.045) 1px, transparent 1px);
+    background-size:48px 48px;
+    -webkit-mask-image:radial-gradient(900px 620px at 52% 48%, #000 20%, transparent 78%);
+    mask-image:radial-gradient(900px 620px at 52% 48%, #000 20%, transparent 78%)}
+  .top{position:absolute;left:64px;right:64px;top:48px;display:flex;align-items:center;gap:18px}
+  .wm{height:24px;width:auto;display:block}
+  .tag{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9a9898}
+  .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:10.5px;color:#646262}
+  .right b{color:#201d1d;font-weight:400}
+  .dot{width:5px;height:5px;border-radius:50%;background:#007aff;display:inline-block}
+  .main{position:absolute;left:64px;top:158px;width:600px}
+  .eyebrow{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#9a9898;margin:0 0 20px}
+  h1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:96px;line-height:.94;letter-spacing:-.022em;margin:0 0 22px}
+  h1 em{font-style:italic;color:#007aff}
+  .sub{font-size:14.5px;line-height:1.6;color:#424245;margin:0 0 30px;max-width:470px}
+  .stats{display:flex;align-items:center;gap:14px;font-size:12px;color:#646262}
+  .stats b{color:#201d1d;font-weight:400}
+  .sep{width:3px;height:3px;border-radius:50%;background:#c9c5c0}
+  .early{margin-top:14px;font-size:11px;color:#9a9898}
+  .early b{color:#007aff;font-weight:400}
+  .term{position:absolute;left:700px;top:132px;width:452px;height:318px;background:#141212;border-radius:10px;overflow:hidden;transform:rotate(-1.2deg);box-shadow:0 40px 90px rgba(30,20,10,.28),0 8px 24px rgba(30,20,10,.12),0 0 0 .5px rgba(0,0,0,.2)}
+  .tbar{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;background:#1b1818;border-bottom:1px solid rgba(253,252,252,.08);position:relative}
+  .dots{display:flex;gap:6px}
+  .dots i{width:8px;height:8px;border-radius:50%;display:block}
+  .dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+  .tt{position:absolute;left:0;right:0;text-align:center;font-size:9px;color:#8e8b8b;letter-spacing:.02em}
+  .live{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:8px;color:#8e8b8b;z-index:2}
+  .live i{width:4px;height:4px;border-radius:50%;background:#30d158;display:block}
+  .tbody{padding:16px 18px;font-size:11.5px;line-height:1.95;color:#fdfcfc;white-space:nowrap}
+  .tbody .p{color:#79c0ff}
+  .tbody .dim{color:#9a9898}
+  .tbody .f{color:#d7d3ce}
+  .tbody .ok{color:#7ee787}
+  .tbody .cur{display:inline-block;width:7px;height:13px;background:#fdfcfc;vertical-align:-2px;animation:none}
+  .badge{position:absolute;left:700px;top:500px;display:flex;align-items:center;gap:10px;font-size:10.5px;color:#646262}
+  .badge b{font-weight:400;color:#201d1d}
+  .badge .chip{border:1px solid rgba(15,0,0,.16);border-radius:3px;padding:5px 8px;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#646262;background:rgba(253,252,252,.7)}
+  .foot{position:absolute;left:64px;bottom:36px;font-size:10px;color:#9a9898;letter-spacing:.02em}
+  .url{position:absolute;right:64px;bottom:36px;font-size:10.5px;color:#201d1d}
+  .line{position:absolute;left:64px;top:548px;width:96px;height:2px;background:#007aff}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid"></div>
+
+<div class="top">
+  <img class="wm" src="assets/brand/opencode-wordmark-light.png" alt="OpenCode">
+  <span class="tag">vibe-coding · cohort 04</span>
+  <div class="right"><span class="dot"></span><span><b>starts Nov 10</b></span><span>·</span><span>12–16 seats</span></div>
+</div>
+
+<div class="main">
+  <div class="eyebrow">A six-week course in shipping with agents</div>
+  <h1>Ship apps<br>by <em>vibes.</em></h1>
+  <p class="sub">From the first prompt to a reviewed, shipped feature. Every module practised in OpenCode.</p>
+  <div class="stats"><b>6 weeks</b><span class="sep"></span><b>36 hours</b><span class="sep"></span><b>19 lessons</b><span class="sep"></span><b>$290</b></div>
+  <div class="early">early bird <b>$240</b> until 3 November</div>
+</div>
+
+<div class="term">
+  <div class="tbar"><span class="dots"><i></i><i></i><i></i></span><span class="tt">opencode — ~/vibe-demo</span><span class="live"><i></i>LIVE</span></div>
+  <div class="tbody">
+    <div><span class="p">$</span> opencode</div>
+    <div><span class="p">›</span> build a landing page for a coffee shop</div>
+    <div class="dim"><span>●</span> Read <span class="f">site/index.html</span></div>
+    <div class="dim"><span>●</span> Write <span class="f">site/index.html</span> <span class="ok">+128</span></div>
+    <div class="dim"><span>●</span> Bash <span class="f">npm run dev</span></div>
+    <div><span class="ok">✔ ready in 412ms</span> <span class="dim">— localhost:3000</span></div>
+    <div class="dim"><span>●</span> Review <span class="f">diff</span> <span class="ok">2 files</span></div>
+    <div><span class="ok">✔ tests pass</span> <span class="dim">14/14</span></div>
+    <div><span class="p">›</span> <span class="cur"></span></div>
+  </div>
+</div>
+
+<div class="badge"><span class="chip">reviewed capstone</span><span><b>built with the loop</b> · spec → build → review → ship</span></div>
+<div class="line"></div>
+<div class="foot">Denis · Danik · Mukhammed · Arseniy</div>
+<div class="url">sehaxe.github.io/vibe-coding</div>
+</body>
+</html>

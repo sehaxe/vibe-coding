@@ -48,3 +48,14 @@ Denis — analyst & coordinator · Danik — curriculum developer · Mukhammed �
 ## Credits
 
 The OpenCode wordmark is the property of its authors and is used here for a course about OpenCode. Fonts: JetBrains Mono and Instrument Serif (SIL Open Font License).
+
+## Print materials
+
+- `certificates/` — A4 landscape sample certificate (Typst): `typst compile --font-path fonts certificate.typ certificate.pdf`
+- `handout/` — A4 landscape tri-fold, 2 pages (Typst): `typst compile --font-path fonts handout.typ handout.pdf`
+
+Print the handout double-sided, flip on short edge, fold in thirds. The certificate is A4 landscape; the poster is A2 portrait.
+
+## Social card / SEO
+
+`site/og.html` renders the 1200×630 card (`site/assets/og/og.jpg`). The landing and course pages carry canonical URLs, Open Graph, Twitter cards and Course JSON-LD; `sitemap.xml` and `robots.txt` live at the repo root.

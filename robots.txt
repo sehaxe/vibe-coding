@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sehaxe.github.io/vibe-coding/sitemap.xml
